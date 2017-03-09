@@ -3,7 +3,9 @@ from scipy.special import expit
 import copy
 import warnings
 
-class Druck:
+from .base import BaseSampler
+
+class Druck(BaseSampler):
     """
     Input
     -----
@@ -30,97 +32,31 @@ class Druck:
     debug : bool, optional, default False
         if True, prints debugging information.
     """
-    def __init__(self, labels, strata, alpha=0.5, replace=True,
-                 max_iter = None, debug=False):
+    def __init__(self, alpha, oracle, predictions, scores, strata=None,
+                 max_iter=None, indices=None, replace=True, debug=False):
+        self.scores = scores
         self._original_strata = strata
-        self.labels = labels
         self.strata = copy.deepcopy(strata)
-        self.alpha = alpha
         self.replace = replace
-        self._max_iter = max_iter
         self.debug = debug
 
-        self.t = 0
-
-        if (not self.replace) or (self._max_iter is None):
-            self._max_iter = self.strata.num_pts
-
-        # Terms used to calculate F-measure (we update them iteratively)
-        self._TP_term = 0
-        self._PP_term = 0
-        self._P_term = 0
+        #TODO construct strata if not given
+        #TODO don't require scores if strata is given?
 
         self.n_sampled = np.zeros(self.strata.num_st, dtype=int)
 
-        # Array to store history of F-measure estimates
-        self.F = np.repeat(np.nan, self._max_iter)
+    def _sample_item(self):
+        stratum_idx, sample_loc = self.strata.sample(prob_dist = None, replace = self.replace)
 
-        # Array to record whether oracle was queried at each iteration
-        self.queried_oracle = np.repeat(False, self._max_iter)
+        #TODO convert to appropriate form
 
-    def _update_F_terms(self, y, yhat):
-        """
-        Iteratively update the terms that are used to calculate the F-measure
-        after a new point is sampled with label `y` and prediction `yhat`.
-        """
-        if y == 1 and yhat == 1:
-            # Point is true positive
-            self._TP_term = self._TP_term + 1
-            self._PP_term = self._PP_term + 1
-            self._P_term = self._P_term + 1
-        elif yhat == 1:
-            # Point is false positive
-            self._PP_term = self._PP_term + 1
-        elif y == 1:
-            # Point is false negative
-            self._P_term = self._P_term + 1
-
-    def _update_F(self):
-        """
-        Records the latest estimate of the F-measure
-        """
-
-        t = self.t
-
-        num = self._TP_term
-        den = (self.alpha * self._PP_term + (1 - self.alpha) * self._P_term)
-
-        if den == 0:
-            self.F[t] = np.nan
-        else:
-            self.F[t] = num/den
-
-    def _query_label(self, sample_id):
-        """
-        Queries the oracle for the label of the datapoint with id `sample_id`.
-        Also records that the oracle was queried.
-
-        Returns the ground truth label `0` or `1`.
-        """
-        t = self.t
-
-        # Get label
-        y = self.labels[sample_id]
-
-        # Record that label was queried in this iteration
-        self.queried_oracle[t] = True
-
-        return y
+        return loc, 1, {'stratum_idx':stratum_idx}
 
     def reset(self):
-        self.t = 0
+        super(PassiveSampler, self).reset()
 
         self.strata = copy.deepcopy(self._original_strata)
-
-        self._TP_term = 0
-        self._PP_term = 0
-        self._P_term = 0
-
         self.n_sampled = np.zeros(self.strata.num_st, dtype=int)
-
-        self.F = np.repeat(np.nan, self._max_iter)
-
-        self.queried_oracle = np.repeat(False, self._max_iter)
 
     def sample(self, n_iter):
         """
@@ -128,39 +64,17 @@ class Druck:
         fixed_stratum :
 
         """
-        t_i = self.t
-        t_f = n_iter + self.t
-
-        assert t_f <= self.F.shape[0]
 
         for t in range(t_i, t_f):
             # Check if there are any more points to sample
+
+            # TODO ensure that these extra steps are taken care of in the BaseSampler
+            # Or rewrite to ensure that they can be carried out here.
             if (not self.replace and
                     np.sum(self.strata.populations - self.n_sampled) == 0):
                 print("All points have been sampled")
                 return
 
-            # Sample label and record weight
-            stratum_idx, sample_loc = self.strata.sample(prob_dist = None, replace = self.replace)
-
-            # Check if label has already been queried and stored
-            y = self.strata.labels[stratum_idx][sample_loc]
-            if np.isnan(y):
-                # Need to query oracle
-                sample_idx = self.strata.allocations[stratum_idx][sample_loc]
-                y = self._query_label(sample_idx)
-                # Store label
-                self.strata.update_label(stratum_idx, sample_loc, y)
-
-            # Get prediction
-            pred = self.strata.preds[stratum_idx][sample_loc]
-
-            if self.debug == True:
-                print("TP_term: {}, PP_term: {}, P_term: {}".format(self._TP_term, self._PP_term, self._P_term))
-                print("Sampled label {} for point {} in stratum {}.".format(y,self.strata.allocations[stratum_idx][sample_loc], stratum_idx))
-
-            self._update_F_terms(y, pred)
-            self._update_F()
             self.n_sampled[stratum_idx] += 1
 
             self.t = self.t + 1

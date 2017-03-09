@@ -1,7 +1,6 @@
 import numpy as np
 import tables
 import time
-import pandas as pd
 import logging
 import warnings
 
@@ -42,7 +41,7 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
     array_F = f.create_earray(f.root, 'F_measure', float_atom, (0, num_labels))
     array_s = f.create_carray(f.root, 'n_iterations', int_atom, (num_expts, 1))
     array_t = f.create_carray(f.root, 'CPU_time', float_atom, (num_expts, 1))
-    
+
     logging.info("Starting {} experiments".format(num_expts))
     for idx in range(num_expts):
         if idx%100 == 0:
@@ -76,7 +75,7 @@ def process_expt(h5_path, verbose = False, inmemory = True, ignorenan = False):
     Output
     ------
     F_mean : float numpy.ndarray
-    
+
     F_var : float numpy.ndarray
     """
 
@@ -84,11 +83,11 @@ def process_expt(h5_path, verbose = False, inmemory = True, ignorenan = False):
     h5_file = tables.open_file(h5_path, mode = 'r')
 
     F = h5_file.root.F_measure
-    
+
     n_labels = F.shape[1]
     n_expt = F.shape[0]
     mean_n_iterations = np.sum(h5_file.root.n_iterations)/n_expt
-    
+
     if hasattr(h5_file.root, 'CPU_time'):
         CPU_time = h5_file.root.CPU_time
         mean_CPU_time = np.mean(CPU_time)
@@ -97,7 +96,7 @@ def process_expt(h5_path, verbose = False, inmemory = True, ignorenan = False):
         mean_CPU_time = None
         var_CPU_time = None
         mean_CPU_time_per_iteration = None
-    
+
     F_mean = np.empty(n_labels, dtype='float')
     F_var = np.empty(n_labels, dtype='float')
     F_stderr = np.empty(n_labels, dtype='float')
@@ -132,12 +131,12 @@ def process_expt(h5_path, verbose = False, inmemory = True, ignorenan = False):
 
     h5_file.close()
 
-    return {'mean': F_mean, 
-            'variance': F_var, 
-            'std_error': F_stderr, 
-            'n_samples': n_sample, 
-            'n_expts': n_expt, 
-            'n_labels': n_labels, 
+    return {'mean': F_mean,
+            'variance': F_var,
+            'std_error': F_stderr,
+            'n_samples': n_sample,
+            'n_expts': n_expt,
+            'n_labels': n_labels,
             'mean_CPU_time': mean_CPU_time,
             'var_CPU_time': var_CPU_time,
             'mean_n_iterations': mean_n_iterations,
@@ -187,7 +186,7 @@ class Data:
             self.preds = h5_file.root.preds[:]
         else:
             self.preds = None
-        
+
         self.num_pts = h5_file.root.features.shape[0]
         self.num_fts = h5_file.root.features.shape[1]
 
@@ -226,20 +225,18 @@ class Data:
         Calculates number of TP, FP, TN, FN
         """
         if self.labels is None:
-            raise DataError("Cannot calculate confusion matrix before data \
-                            has been read.")
+            raise DataError("Cannot calculate confusion matrix before data "
+                            "has been read.")
 
         if self.preds is None:
-            raise DataError("Predictions not available. Please run \
-                             `make_predictions` before calculating confusion \
-                             matrix")
+            raise DataError("Predictions not available. Please run "
+                            "`make_predictions` before calculating confusion "
+                            "matrix")
 
-        df = pd.DataFrame({'label': self.labels, 'pred': self.preds})
-
-        self.TP = len(df[(df.pred == 1) & (df.label == 1)])
-        self.TN = len(df[(df.pred == 0) & (df.label == 0)])
-        self.FP = len(df[(df.pred == 1) & (df.label == 0)])
-        self.FN = len(df[(df.pred == 0) & (df.label == 1)])
+        self.TP = np.sum(np.logical_and(self.preds == 1, self.labels == 1))
+        self.TN = np.sum(np.logical_and(self.preds == 0, self.labels == 0))
+        self.FP = np.sum(np.logical_and(self.preds == 1, self.labels == 0))
+        self.FN = np.sum(np.logical_and(self.preds == 0, self.labels == 1))
 
         if printout:
             print("Contingency matrix is:")

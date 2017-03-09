@@ -17,7 +17,7 @@ setup(name='oasis',
     install_requires=[
         'numpy',
         'tables',
-        'pandas'
+        'scipy'
     ],
     include_package_data=True,
     zip_safe=False)
