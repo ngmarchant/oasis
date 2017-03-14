@@ -117,42 +117,33 @@ given, defaults to [0, 1, ..., pool_size].</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="druck2011" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Druck2011]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> G. Druck and A. McCallum, &#8220;Toward Interactive Training and
+Evaluation,&#8221; in Proceedings of the 20th ACM International Conference on
+Information and Knowledge Management, 2011, pp. 947–956.</td></tr>
+</tbody>
+</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col width="6%" />
+<col width="94%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a href="#id2"><span class="problematic" id="id3">estimate_</span></a></td>
+<tr class="row-odd"><td><a href="#id3"><span class="problematic" id="id4">estimate_</span></a></td>
 <td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
 </tr>
-<tr class="row-even"><td><a href="#id4"><span class="problematic" id="id5">queried_oracle_</span></a></td>
+<tr class="row-even"><td><a href="#id5"><span class="problematic" id="id6">queried_oracle_</span></a></td>
 <td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
 </tr>
-<tr class="row-odd"><td><a href="#id6"><span class="problematic" id="id7">cached_labels_</span></a></td>
+<tr class="row-odd"><td><a href="#id7"><span class="problematic" id="id8">cached_labels_</span></a></td>
 <td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
 </tr>
-<tr class="row-even"><td><a href="#id8"><span class="problematic" id="id9">t_</span></a></td>
+<tr class="row-even"><td><a href="#id9"><span class="problematic" id="id10">t_</span></a></td>
 <td>(int) iteration index.</td>
-</tr>
-<tr class="row-odd"><td><table class="first last docutils citation" frame="void" id="druck2011" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[Druck2011]</a></td><td><ol class="first last upperalpha simple" start="7">
-<li>Druck and A. McCallum, &#8220;Toward Interactive Training and</li>
-</ol>
-</td></tr>
-</tbody>
-</table>
-</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-even"><td>Evaluation,&#8221; in Proceedings of the 20th ACM International Conference on</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-odd"><td>Information and Knowledge Management, 2011, pp. 947–956.</td>
-<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>

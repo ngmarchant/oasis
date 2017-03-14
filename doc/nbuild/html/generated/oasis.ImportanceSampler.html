@@ -55,7 +55,7 @@
 <p>on a finite pool by sampling items according to an instrumental
 distribution that minimises asymptotic variance. The instrumental
 distribution is estimated based on classifier confidence scores. True
-labels are queried from an oracle. See reference [Sawade2010] for details.</p>
+labels are queried from an oracle. See reference <a class="reference internal" href="#sawade2010" id="id1">[Sawade2010]</a> for details.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -123,36 +123,36 @@ given, defaults to [0, 1, ..., pool_size].</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="sawade2010" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Sawade2010]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation
+of F-Measures,” in Advances in Neural Information Processing Systems 23,
+2010, pp. 2083–2091</td></tr>
+</tbody>
+</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col width="6%" />
+<col width="94%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a href="#id2"><span class="problematic" id="id3">estimate_</span></a></td>
+<tr class="row-odd"><td><a href="#id3"><span class="problematic" id="id4">estimate_</span></a></td>
 <td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
 </tr>
-<tr class="row-even"><td><a href="#id4"><span class="problematic" id="id5">queried_oracle_</span></a></td>
+<tr class="row-even"><td><a href="#id5"><span class="problematic" id="id6">queried_oracle_</span></a></td>
 <td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
 </tr>
-<tr class="row-odd"><td><a href="#id6"><span class="problematic" id="id7">cached_labels_</span></a></td>
+<tr class="row-odd"><td><a href="#id7"><span class="problematic" id="id8">cached_labels_</span></a></td>
 <td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
 </tr>
-<tr class="row-even"><td><a href="#id8"><span class="problematic" id="id9">t_</span></a></td>
+<tr class="row-even"><td><a href="#id9"><span class="problematic" id="id10">t_</span></a></td>
 <td>(int) iteration index.</td>
 </tr>
-<tr class="row-odd"><td><a href="#id10"><span class="problematic" id="id11">inst_pmf_</span></a></td>
+<tr class="row-odd"><td><a href="#id11"><span class="problematic" id="id12">inst_pmf_</span></a></td>
 <td>(numpy.ndarray, shape=(pool_size,)) epsilon-greedy instrumental pmf used for sampling.</td>
-</tr>
-<tr class="row-even"><td>[Sawade2010] C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-odd"><td>F-Measures,” in Advances in Neural Information Processing Systems 23, 2010,</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-even"><td>pp. 2083–2091</td>
-<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>

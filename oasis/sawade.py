@@ -89,9 +89,9 @@ class ImportanceSampler(BaseSampler):
 
     References
     ----------
-    [Sawade2010] C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of
-    F-Measures,” in Advances in Neural Information Processing Systems 23, 2010,
-    pp. 2083–2091
+    .. [Sawade2010] C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation
+       of F-Measures,” in Advances in Neural Information Processing Systems 23,
+       2010, pp. 2083–2091
     """
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
                  epsilon=1e-3, max_iter=None, indices = None, debug=False):

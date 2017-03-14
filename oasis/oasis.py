@@ -247,8 +247,8 @@ class OASISSampler(BaseSampler):
     References
     ----------
     .. [Marchant2017] N. G. Marchant and B. I. P. Rubinstein, In Search of an
-    Entity Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,
-    arXiv:1703.00617 [cs.LG], Mar 2017.
+       Entity Resolution OASIS: Optimal Asymptotic Sequential Importance
+       Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.
     """
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
                  epsilon=1e-3, prior_strength=None, decaying_prior=True,

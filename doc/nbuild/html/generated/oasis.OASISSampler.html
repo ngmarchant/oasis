@@ -55,7 +55,7 @@
 </div>
 <p>on a finite pool by sampling items according to an adaptive instrumental
 distribution that minimises asymptotic variance. See reference
-[Marchant2017] for details.</p>
+<a class="reference internal" href="#marchant2017" id="id1">[Marchant2017]</a> for details.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -141,10 +141,20 @@ given, defaults to [0, 1, ..., pool_size].</p>
 </div></blockquote>
 <p><strong>**kwargs :</strong></p>
 <blockquote class="last">
-<div><p>optional keyword arguments (see section below).</p>
+<div><p>optional keyword arguments. Includes &#8216;stratification_method&#8217;,
+&#8216;stratification_n_strata&#8217;, and &#8216;stratification_n_bins&#8217;.</p>
 </div></blockquote>
 </td>
 </tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="marchant2017" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Marchant2017]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> N. G. Marchant and B. I. P. Rubinstein, In Search of an
+Entity Resolution OASIS: Optimal Asymptotic Sequential Importance
+Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -154,19 +164,19 @@ given, defaults to [0, 1, ..., pool_size].</p>
 <col width="94%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a href="#id2"><span class="problematic" id="id3">estimate_</span></a></td>
+<tr class="row-odd"><td><a href="#id3"><span class="problematic" id="id4">estimate_</span></a></td>
 <td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
 </tr>
-<tr class="row-even"><td><a href="#id4"><span class="problematic" id="id5">queried_oracle_</span></a></td>
+<tr class="row-even"><td><a href="#id5"><span class="problematic" id="id6">queried_oracle_</span></a></td>
 <td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
 </tr>
-<tr class="row-odd"><td><a href="#id6"><span class="problematic" id="id7">cached_labels_</span></a></td>
+<tr class="row-odd"><td><a href="#id7"><span class="problematic" id="id8">cached_labels_</span></a></td>
 <td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
 </tr>
-<tr class="row-even"><td><a href="#id8"><span class="problematic" id="id9">t_</span></a></td>
+<tr class="row-even"><td><a href="#id9"><span class="problematic" id="id10">t_</span></a></td>
 <td>(int) iteration index.</td>
 </tr>
-<tr class="row-odd"><td><a href="#id10"><span class="problematic" id="id11">inst_pmf_</span></a></td>
+<tr class="row-odd"><td><a href="#id11"><span class="problematic" id="id12">inst_pmf_</span></a></td>
 <td>(numpy.ndarray, shape=(num_strata,) or (num_strata, max_iter)) epsilon-greedy instrumental pmf used for sampling. If <code class="docutils literal"><span class="pre">record_inst_hist</span> <span class="pre">==</span> <span class="pre">False</span></code> only the most recent pmf is returned, else returns the entire history of pmfs in a 2D array.</td>
 </tr>
 </tbody>
