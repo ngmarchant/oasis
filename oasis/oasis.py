@@ -287,8 +287,7 @@ class OASISSampler(BaseSampler):
             self.prior_strength = 2*self.strata.num_strata_
 
         # Instantiate Beta-Bernoulli model
-        gamma = self._calc_BB_prior(self.strata.mean_score,
-                                      self.prior_strength, self.proba)
+        gamma = self._calc_BB_prior(self.strata.mean_score)
         self._BB_model = BetaBernoulliModel(gamma[0], gamma[1],
                                             decaying_prior=self.decaying_prior)
 
