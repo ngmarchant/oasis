@@ -34,13 +34,15 @@ class PassiveSampler(BaseSampler):
         longer continue. If no value is given, defaults to the size of
         the pool.
 
+    replace : bool, optional, default True
+        whether to sample with or without replacement.
+
+    Other Parameters
+    ----------------
     indices : array-like, optional, default None
         ordered array of unique identifiers for the items in the pool.
         Should match the order of the "predictions" parameter. If no value is
         given, defaults to [0, 1, ..., pool_size].
-
-    replace : bool, optional, default True
-        whether to sample with or without replacement.
 
     debug : bool, optional, default False
         whether to print out verbose debugging information.
