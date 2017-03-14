@@ -80,6 +80,8 @@ class DruckSampler(PassiveSampler):
     t_ : int
         iteration index.
 
+    References
+    ----------
     .. [Druck2011] G. Druck and A. McCallum, "Toward Interactive Training and
     Evaluation," in Proceedings of the 20th ACM International Conference on
     Information and Knowledge Management, 2011, pp. 947–956.

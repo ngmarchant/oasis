@@ -47,15 +47,124 @@
 <dl class="class">
 <dt id="oasis.DruckSampler">
 <em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">DruckSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>strata=None</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>replace=True</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.DruckSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p class="rubric">Methods</p>
+<dd><p>Stratified sampling for estimation of the weighted F-measure</p>
+<p>Estimates the quantity:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>on a finite pool by sampling items according to an adaptive instrumental
+distribution that minimises asymptotic variance. See reference
+<a class="reference internal" href="#druck2011" id="id1">[Druck2011]</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float</p>
+<blockquote>
+<div><p>weight for the F-measure. Valid weights are on the interval [0, 1].
+<code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">1</span></code> corresponds to precision, <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0</span></code> corresponds to
+recall, and <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0.5</span></code> corresponds to the balanced F-measure.</p>
+</div></blockquote>
+<p><strong>predictions</strong> : array-like, shape=(pool_size,)</p>
+<blockquote>
+<div><p>ordered array of predicted labels for each item in the pool. Valid
+labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+</div></blockquote>
+<p><strong>scores</strong> : array-like, shape=(pool_size,)</p>
+<blockquote>
+<div><p>ordered array of scores which quantify the classifier confidence for
+the items in the pool. High scores indicate a high confidence that
+the true label is a &#8220;1&#8221; (and vice versa for label &#8220;0&#8221;).</p>
+</div></blockquote>
+<p><strong>oracle</strong> : function</p>
+<blockquote>
+<div><p>a function which takes an item id as input and returns the item&#8217;s true
+label. Valid labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+</div></blockquote>
+<p><strong>strata</strong> : Strata instance, optional, default None</p>
+<blockquote>
+<div><p>describes how to stratify the pool. If not given, the stratification
+will be done automatically based on the scores given. Additional
+keyword arguments may be passed to control this automatic
+stratification (see below).</p>
+</div></blockquote>
+<p><strong>max_iter</strong> : int, optional, default None</p>
+<blockquote>
+<div><p>space for storing the sampling history is limited to a maximum
+number of iterations. Once this limit is reached, sampling can no
+longer continue. If no value is given, defaults to the size of
+the pool.</p>
+</div></blockquote>
+<p><strong>replace</strong> : boolean</p>
+<blockquote>
+<div><p>If True, sample with replacement, otherwise, sample without
+replacement.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>indices</strong> : array-like, optional, default None</p>
+<blockquote>
+<div><p>ordered array of unique identifiers for the items in the pool.
+Should match the order of the &#8220;predictions&#8221; parameter. If no value is
+given, defaults to [0, 1, ..., pool_size].</p>
+</div></blockquote>
+<p><strong>debug</strong> : bool, optional, default False</p>
+<blockquote class="last">
+<div><p>if True, prints debugging information.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a href="#id2"><span class="problematic" id="id3">estimate_</span></a></td>
+<td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
+</tr>
+<tr class="row-even"><td><a href="#id4"><span class="problematic" id="id5">queried_oracle_</span></a></td>
+<td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
+</tr>
+<tr class="row-odd"><td><a href="#id6"><span class="problematic" id="id7">cached_labels_</span></a></td>
+<td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
+</tr>
+<tr class="row-even"><td><a href="#id8"><span class="problematic" id="id9">t_</span></a></td>
+<td>(int) iteration index.</td>
+</tr>
+<tr class="row-odd"><td><table class="first last docutils citation" frame="void" id="druck2011" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[Druck2011]</a></td><td><ol class="first last upperalpha simple" start="7">
+<li>Druck and A. McCallum, &#8220;Toward Interactive Training and</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Evaluation,&#8221; in Proceedings of the 20th ACM International Conference on</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Information and Knowledge Management, 2011, pp. 947–956.</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="#oasis.DruckSampler.reset" title="oasis.DruckSampler.reset"><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code></a>()</td>
+<td>Resets the sampler to its initial state</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#oasis.DruckSampler.sample" title="oasis.DruckSampler.sample"><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code></a>(n_items)</td>
 <td>Sample a sequence of items from the pool</td>
@@ -69,6 +178,12 @@
 <dt id="oasis.DruckSampler.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>strata=None</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>replace=True</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.DruckSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="oasis.DruckSampler.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#oasis.DruckSampler.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the sampler to its initial state</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="oasis.DruckSampler.sample">

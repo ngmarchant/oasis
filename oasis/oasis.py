@@ -218,7 +218,8 @@ class OASISSampler(BaseSampler):
         whether to print out verbose debugging information.
 
     **kwargs :
-        optional keyword arguments (see section below).
+        optional keyword arguments. Includes 'stratification_method',
+        'stratification_n_strata', and 'stratification_n_bins'.
 
     Attributes
     ----------
@@ -243,18 +244,8 @@ class OASISSampler(BaseSampler):
         ``record_inst_hist == False`` only the most recent pmf is returned,
         else returns the entire history of pmfs in a 2D array.
 
-    Optional **kwargs
-    -----------------
-    stratification_method : {'cum_sqrt_F' or 'equal_size'}
-        stratification method to use. See TODO
-
-    stratification_n_bins : int
-        number of bins to use when approximating the score distribution. See
-        TODO
-
-    stratification_n_strata : int
-        goal number of strata (not guaranteed). See TODO
-
+    References
+    ----------
     .. [Marchant2017] N. G. Marchant and B. I. P. Rubinstein, In Search of an
     Entity Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,
     arXiv:1703.00617 [cs.LG], Mar 2017.

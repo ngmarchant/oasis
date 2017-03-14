@@ -87,6 +87,8 @@ class ImportanceSampler(BaseSampler):
     inst_pmf_ : numpy.ndarray, shape=(pool_size,)
         epsilon-greedy instrumental pmf used for sampling.
 
+    References
+    ----------
     [Sawade2010] C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of
     F-Measures,” in Advances in Neural Information Processing Systems 23, 2010,
     pp. 2083–2091

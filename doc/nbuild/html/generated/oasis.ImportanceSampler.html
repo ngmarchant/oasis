@@ -102,15 +102,18 @@ number of iterations. Once this limit is reached, sampling can no
 longer continue. If no value is given, defaults to the size of
 the pool.</p>
 </div></blockquote>
-<p><strong>indices</strong> : array-like, optional, default None</p>
+<p><strong>replace</strong> : bool, optional, default True</p>
+<blockquote>
+<div><p>whether to sample with or without replacement.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>indices</strong> : array-like, optional, default None</p>
 <blockquote>
 <div><p>ordered array of unique identifiers for the items in the pool.
 Should match the order of the &#8220;predictions&#8221; parameter. If no value is
 given, defaults to [0, 1, ..., pool_size].</p>
-</div></blockquote>
-<p><strong>replace</strong> : bool, optional, default True</p>
-<blockquote>
-<div><p>whether to sample with or without replacement.</p>
 </div></blockquote>
 <p><strong>debug</strong> : bool, optional, default False</p>
 <blockquote class="last">
