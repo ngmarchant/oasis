@@ -32,24 +32,24 @@ class DruckSampler(PassiveSampler):
     debug : bool, optional, default False
         if True, prints debugging information.
     """
-    def __init__(self, alpha, predictions, oracle, scores, strata=None,
+    def __init__(self, alpha, predictions, scores, oracle, strata=None,
                  max_iter=None, indices=None, replace=True, debug=False,
                  **kwargs):
-        super(DruckSampler, self).__init__(alpha, predictions, oracle, 
+        super(DruckSampler, self).__init__(alpha, predictions, oracle,
                                            max_iter, indices, replace, debug)
         self.scores = scores
         self.strata = strata
 
         # Generate strata if not given
         if self.strata is None:
-            self.strata = auto_stratify(self.scores, kwargs)
+            self.strata = auto_stratify(self.scores, **kwargs)
 
     def _sample_item(self):
         """
         Samples an item from the strata
         """
         # Sample label and record weight
-        loc, stratum_idx = self.strata.sample(pmf = self.strata.weights)
+        loc, stratum_idx = self.strata.sample(pmf = self.strata.weights_)
 
         return loc, 1, {'stratum': stratum_idx}
 

@@ -276,7 +276,7 @@ class OASISSampler(BaseSampler):
 
         # Generate strata if not given
         if self.strata is None:
-            self.strata = auto_stratify(self.scores, kwargs)
+            self.strata = auto_stratify(self.scores, **kwargs)
 
         # Calculate mean score and mean prediction per stratum
         self.strata.mean_score = self.strata.intra_mean(self.scores)
@@ -284,7 +284,7 @@ class OASISSampler(BaseSampler):
 
         # Choose prior strength if not given
         if self.prior_strength is None:
-            self.prior_strength = 2*self.strata.num_strata
+            self.prior_strength = 2*self.strata.num_strata_
 
         # Instantiate Beta-Bernoulli model
         gamma = self._calc_BB_prior(self.strata.mean_score,
@@ -293,15 +293,15 @@ class OASISSampler(BaseSampler):
                                             decaying_prior=self.decaying_prior)
 
         self._F_guess = self._calc_F_guess(self.alpha, self.strata.mean_pred,
-                                           self._BB_model.theta,
-                                           self.strata.weights)
+                                           self._BB_model.theta_,
+                                           self.strata.weights_)
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.num_strata, self._max_iter],
+            self.inst_pmf_ = np.zeros([self.strata.num_strata_, self._max_iter],
                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.num_strata, dtype=float)
+            self.inst_pmf_ = np.zeros(self.strata.num_strata_, dtype=float)
 
     def _sample_item(self):
         """Sample an item from the pool according to the instrumental
@@ -319,7 +319,7 @@ class OASISSampler(BaseSampler):
 
         # Sample label and record weight
         loc, stratum_idx = self.strata.sample(pmf = inst_pmf)
-        weight = self.strata.weights[stratum_idx]/inst_pmf[stratum_idx]
+        weight = self.strata.weights_[stratum_idx]/inst_pmf[stratum_idx]
 
         return loc, weight, {'stratum': stratum_idx}
 
@@ -373,8 +373,8 @@ class OASISSampler(BaseSampler):
         epsilon = self.epsilon
         alpha = self.alpha
         predictions = self.strata.mean_pred
-        weights = self.strata.weights
-        p1 = self._BB_model.theta
+        weights = self.strata.weights_
+        p1 = self._BB_model.theta_
         p0 = 1 - p1
         F = np.nan if t == 0 else self.estimate_[t - 1]
 
@@ -414,7 +414,7 @@ class OASISSampler(BaseSampler):
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.num_strata, self._max_iter],
+            self.inst_pmf_ = np.zeros([self.strata.num_strata_, self._max_iter],
                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.num_strata, dtype=float)
+            self.inst_pmf_ = np.zeros(self.strata.num_strata_, dtype=float)

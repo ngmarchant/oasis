@@ -60,8 +60,8 @@ class Kadane:
 
         self.t = 0
         self.num_pts = len(labels)
-        self.num_st = self.strata.num_st
-        self.n_remaining = copy.deepcopy(self.strata.sizes)
+        self.num_st = self.strata.num_strata_
+        self.n_remaining = copy.deepcopy(self.strata.sizes_)
         self.n_sampled = np.zeros(self.num_st, dtype=int)
 
         # TODO This code calculates the prior -- move to Strata class instead

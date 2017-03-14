@@ -21,14 +21,12 @@ def stratify_by_features(features, num_strata, **kwargs):
 
     Returns
     -------
-    allocations : numpy.ndarray, shape=(pool_size,)
-        ordered array of ints which specifies the index of the allocated
-        stratum for each item in the pool.
+    Strata instance
     """
     pool_size = features.shape[0]
     km = KMeans(n_clusters=num_strata, **kwargs)
     allocations = km.fit_predict(X=features)
-    return allocations
+    return Strata(allocations)
 
 def _heuristic_bin_width(obs):
     """Optimal histogram bin width based on the Freedman-Diaconis rule"""
@@ -66,9 +64,7 @@ def stratify_by_scores(scores, goal_num_strata='auto', method='cum_sqrt_F',
 
     Returns
     -------
-    allocations : list of integer numpy.ndarrays
-        ordered array of ints which specifies the index of the allocated
-        stratum for each item in the pool.
+    Strata instance
     """
 
     available_methods = ['equal_size', 'cum_sqrt_F']
@@ -151,7 +147,7 @@ def stratify_by_scores(scores, goal_num_strata='auto', method='cum_sqrt_F',
         if num_strata < goal_num_strata:
             warnings.warn("Failed to create {} strata".format(goal_num_strata))
 
-    return allocations
+    return Strata(allocations)
 
 def auto_stratify(scores, **kwargs):
     """Generate Strata instance automatically
@@ -177,11 +173,11 @@ def auto_stratify(scores, **kwargs):
         n_strata = 'auto'
     if 'stratification_n_bins' in kwargs:
         n_bins = kwargs['stratification_n_bins']
-        allocations = stratify_by_scores(scores, n_strata, method = method, \
+        strata = stratify_by_scores(scores, n_strata, method = method, \
                                          n_bins = n_bins)
     else:
-        allocations = stratify_by_scores(scores, n_strata, method = method)
-    return Strata(allocations)
+        strata = stratify_by_scores(scores, n_strata, method = method)
+    return strata
 
 class Strata:
     """Represents a collection of strata and facilitates sampling from them
@@ -231,8 +227,11 @@ class Strata:
         # Names of strata (could be ints or strings for example)
         self.names_ = np.unique(allocations)
 
+        # Number of strata
+        self.num_strata_ = len(self.names_)
+
         # Size of pool
-        self.pool_size_ = len(self.names_)
+        self.pool_size_ = len(allocations)
 
         self.allocations_ = []
         for name in self.names_:
