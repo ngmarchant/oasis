@@ -157,7 +157,7 @@ class KDE:
         record of which labels have been seen before and which labels have
         been queried from the oracle (for the first time).
 
-        Returns the ground truth label `0` or `1`.
+        Returns the ground truth label "0" or "1".
         """
 
         t = self.t

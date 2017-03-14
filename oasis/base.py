@@ -19,16 +19,20 @@ def is_pos_integer(number):
         return False
 
 class BaseSampler:
-    def __init__(self, alpha, oracle, predictions, max_iter=None, indices=None,
+    def __init__(self, alpha, predictions, oracle, max_iter=None, indices=None,
                  debug=False):
         self.alpha = alpha
         self.oracle = oracle
         self.indices = indices
         self.predictions = predictions
-        self._num_items = len(predictions)
-        self._max_iter = self._num_items if (max_iter is None) else max_iter
+        self._pool_size = len(predictions)
+        self._max_iter = self._pool_size if (max_iter is None) else max_iter
         self.debug=debug
         self._requires_updating = False
+
+        # Make item ids if not given
+        if self.indices is None:
+            self.indices = np.arange(self._pool_size)
 
         # Terms that make up the F-measure
         self._TP = 0
@@ -36,29 +40,33 @@ class BaseSampler:
         self._P = 0
 
         # Iteration index
-        self.t = 0
+        self.t_ = 0
 
         # Array to record whether oracle was queried at each iteration
-        self.queried_oracle = np.repeat(False, self._max_iter)
+        self.queried_oracle_ = np.repeat(False, self._max_iter)
 
-        self.cached_labels = np.repeat(np.nan, self._num_items)
+        self.cached_labels_ = np.repeat(np.nan, self._pool_size)
 
         # Array to record history of F-measure estimates
-        self.estimate = np.repeat(np.nan, self._max_iter)
+        self.estimate_ = np.repeat(np.nan, self._max_iter)
 
     def reset(self):
-        """
-        Re-initialise sampler.
+        """Resets the sampler to its initial state
+
+        Note
+        ----
+        This will destroy the label cache and history of estimates.
         """
         self._TP = 0
         self._PP = 0
         self._P = 0
-        self.t = 0
-        self.queried_oracle = np.repeat(False, self._max_iter)
-        self.cached_labels = np.repeat(np.nan, self._num_items)
-        self.estimate = np.repeat(np.nan, self._max_iter)
+        self.t_ = 0
+        self.queried_oracle_ = np.repeat(False, self._max_iter)
+        self.cached_labels_ = np.repeat(np.nan, self._pool_size)
+        self.estimate_ = np.repeat(np.nan, self._max_iter)
 
     def _iterate(self):
+        """Procedure for a single iteration (sampling and updating)"""
         # Sample item
         loc, weight, extra_info = self._sample_item()
         # Query label
@@ -74,16 +82,20 @@ class BaseSampler:
         if self._requires_updating:
             self._update_sampler(ell, ell_hat, loc, weight, extra_info)
 
-        self.t = self.t + 1
+        self.t_ = self.t_ + 1
 
     def sample(self, n_items):
-        """
-        Sample `n_items`
+        """Sample a sequence of items from the pool
+
+        Parameters
+        ----------
+        n_items : int
+            number of items to sample
         """
         if not is_pos_integer(n_items):
             raise ValueError("n_items must be a positive integer.")
 
-        n_remaining = self._max_iter - self.t
+        n_remaining = self._max_iter - self.t_
 
         if n_remaining == 0:
             raise Exception("No more space available to continue sampling. "
@@ -100,11 +112,18 @@ class BaseSampler:
             self._iterate()
 
     def sample_distinct(self, n_items):
-        """Keeps sampling with replacement until `n_items` distinct items are
-        queried.
+        """Sample a sequence of items from the pool until a minimum number of
+        distinct items are queried
+
+        Parameters
+        ----------
+        n_items : int
+            number of distinct items to sample. If sampling with replacement,
+            this number is not necessarily the same as the number of
+            iterations.
         """
         # Record how many distinct items have not yet been sampled
-        n_notsampled = np.sum(np.isnan(self.cached_labels))
+        n_notsampled = np.sum(np.isnan(self.cached_labels_))
 
         if n_notsampled == 0:
             raise Exception("All distinct items have already been sampled.")
@@ -118,44 +137,45 @@ class BaseSampler:
         n_sampled = 0 # number of distinct items sampled this round
         while n_sampled < n_items:
             self.sample(1)
-            n_sampled += self.queried_oracle[self.t - 1]*1
+            n_sampled += self.queried_oracle_[self.t_ - 1]*1
 
     def _sample_item(self):
+        """Sample a single item from the pool. Varies depending on sampler."""
         return
 
     def _query_label(self, loc):
-        """
-        Queries the label for the item with index `loc`. Preferentially use a
-        cached label, but if not available, queries the oracle.
+        """Query the label for the item with index `loc`. Preferentially
+        queries the label from the cache, but if not yet cached, queries the
+        oracle.
 
-        Returns the label `0` or `1`.
+        Returns
+        -------
+        int
+            the true label "0" or "1".
         """
         # Try to get label from cache
-        ell = self.cached_labels[loc]
+        ell = self.cached_labels_[loc]
 
         if np.isnan(ell):
             # Label has not been cached. Need to query oracle
-            oracle_arg = loc if (self.indices is None) else self.indices[loc]
+            oracle_arg = self.indices[loc]
             ell = self.oracle(oracle_arg)
             if ell not in [0, 1]:
                 raise Exception("Oracle provided an invalid label.")
             #TODO Gracefully handle errors from oracle?
-            self.queried_oracle[self.t] = True
-            self.cached_labels[loc] = ell
+            self.queried_oracle_[self.t_] = True
+            self.cached_labels_[loc] = ell
 
         return ell
 
     def _F_measure(self, alpha, TP, PP, P):
-        """ Definition of weighted F-measure """
+        """Calculate the weighted F-measure"""
         num = TP
         den = (alpha * PP + (1 - alpha) * P)
         return np.nan if (den == 0) else (num/den)
 
     def _update_estimate(self, ell, ell_hat, weight):
-        """
-        Iteratively update the terms that appear in the F-measure, then record
-        the latest estimate
-        """
+        """Update the estimate after querying the label for an item"""
         if ell == 1 and ell_hat == 1:
             # Point is true positive
             self._TP = self._TP + weight
@@ -168,8 +188,9 @@ class BaseSampler:
             # Point is false negative
             self._P = self._P + weight
 
-        self.estimate[self.t] = \
+        self.estimate_[self.t_] = \
                 self._F_measure(self.alpha, self._TP, self._PP, self._P)
 
     def _update_sampler(self, ell, ell_hat, loc, weight, extra_info):
+        """Used for adaptive samplers"""
         return

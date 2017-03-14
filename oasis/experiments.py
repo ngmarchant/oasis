@@ -173,48 +173,44 @@ class Data:
 
         if load_features:
             self.features = h5_file.root.features[:,:]
-        self.labels = h5_file.root.labels[:]
+            self.num_fts = h5_file.root.features.shape[1]
+        if hasattr(h5_file.root, "labels"):
+            self.labels = h5_file.root.labels[:]
         if hasattr(h5_file.root, "scores"):
             self.scores = h5_file.root.scores[:]
-        else:
-            self.probs = None
         if hasattr(h5_file.root, "probs"):
             self.probs = h5_file.root.probs[:]
-        else:
-            self.probs = None
         if hasattr(h5_file.root, "preds"):
             self.preds = h5_file.root.preds[:]
-        else:
-            self.preds = None
 
-        self.num_pts = h5_file.root.features.shape[0]
-        self.num_fts = h5_file.root.features.shape[1]
+        self.num_items = h5_file.root.features.shape[0]
 
         h5_file.close()
 
-    def make_predictions(self, threshold = 0, use_scores = True):
+    def scores_to_preds(self, threshold = 0, use_probs = True):
         """
-        use_scores:     bool. If True, use the scores for predictions. Else use
-                        the probabilities.
+        use_probs : boolean, default True
+            if True, use probabilities for predictions, else use scores.
         """
-
         self.threshold = threshold
 
-        if use_scores:
-            word = "scores"
-            if self.scores is not None:
-                scores = self.scores
+        if use_probs:
+            if self.probs is None:
+                raise DataError("Probabilities are not available to make "
+                                "predictions.")
             else:
-                raise DataError("Scores not available to make predictions")
-        else:
-            word = "probabilities"
-            if self.probs is not None:
+                word = "probabilities"
                 scores = self.probs
+        else:
+            if self.scores is None:
+                raise DataError("Scores are not available to make predictions.")
             else:
-                raise DataError("Probabilities not available to make predictions")
+                word = "scores"
+                scores = self.scores
 
         if threshold > np.max(scores) or threshold < np.min(scores):
-            warnings.warn("Threshold {} is outside the range of the {}.".format(self.threshold, word))
+            warnings.warn("Threshold {} is outside the range of the "
+                          "{}.".format(self.threshold, word))
 
         if self.preds is not None:
             warnings.warn("Overwriting predictions")

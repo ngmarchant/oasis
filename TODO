@@ -1,4 +1,6 @@
+- Use @property for estimate_, queried_oracle_ to exclude tail of array that has
+yet to be filled.
 - Optional threshold argument for Sawade and OASIS
-- Fix Druck method
-- Write documentation
 - Write README
+- Small example dataset for evaluation
+- Jupyter notebook

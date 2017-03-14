@@ -10,7 +10,7 @@ class Kadane:
     Input
     -----
     labels : int numpy array of length n
-        array containing binary labels (assumed to be `0` or `1`) for each
+        array containing binary labels (assumed to be "0" or "1") for each
         data point.
 
     strata: an instance of the `Strata` class
@@ -61,7 +61,7 @@ class Kadane:
         self.t = 0
         self.num_pts = len(labels)
         self.num_st = self.strata.num_st
-        self.n_remaining = copy.deepcopy(self.strata.populations)
+        self.n_remaining = copy.deepcopy(self.strata.sizes)
         self.n_sampled = np.zeros(self.num_st, dtype=int)
 
         # TODO This code calculates the prior -- move to Strata class instead
@@ -79,19 +79,19 @@ class Kadane:
         self.BB_T = BetaBernoulliModel(
                             alpha_0=self._T_bar_est*self._weighted_strength,
                             beta_0=(1-self._T_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
         self.BB_P = BetaBernoulliModel(
                             alpha_0=self._P_bar_est*self._weighted_strength,
                             beta_0=(1-self._P_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
         self.BB_Y = BetaBernoulliModel(
                             alpha_0=self._Y_bar_est*self._weighted_strength,
                             beta_0=(1-self._Y_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
 
@@ -135,7 +135,7 @@ class Kadane:
         """
 
         """
-        populations = self.strata.populations
+        populations = self.strata.sizes
 
         cov = np.zeros([3,3,self.num_st])
 
@@ -181,7 +181,7 @@ class Kadane:
 
     def _calc_decrease(self, F, cov, F_num):
         alpha = self.alpha
-        populations = self.strata.populations
+        populations = self.strata.sizes
         weights = self.strata.weights
         N = self.num_pts
 
@@ -226,25 +226,25 @@ class Kadane:
 
         self.strata = copy.deepcopy(self._original_strata)
 
-        self.n_remaining = copy.deepcopy(self.strata.populations)
+        self.n_remaining = copy.deepcopy(self.strata.sizes)
         self.n_sampled = np.zeros(self.num_st, dtype=int)
 
         self.BB_T = BetaBernoulliModel(
                             alpha_0=self._T_bar_est*self._weighted_strength,
                             beta_0=(1-self._T_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
         self.BB_P = BetaBernoulliModel(
                             alpha_0=self._P_bar_est*self._weighted_strength,
                             beta_0=(1-self._P_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
         self.BB_Y = BetaBernoulliModel(
                             alpha_0=self._Y_bar_est*self._weighted_strength,
                             beta_0=(1-self._Y_bar_est)*self._weighted_strength,
-                            size=None, populations=self.strata.populations,
+                            size=None, populations=self.strata.sizes,
                             store_var=False, store_wp=True
                             )
 

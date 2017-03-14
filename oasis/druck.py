@@ -1,16 +1,16 @@
 import numpy as np
-from scipy.special import expit
-import copy
 import warnings
 
 from .base import BaseSampler
+from .passive import PassiveSampler
+from .stratification import auto_stratify
 
-class Druck(BaseSampler):
+class DruckSampler(PassiveSampler):
     """
     Input
     -----
     labels : int numpy array of length n
-        array containing binary labels (assumed to be `0` or `1`) for each
+        array containing binary labels (assumed to be "0" or "1") for each
         data point.
 
     strata: an instance of the `Strata` class
@@ -32,68 +32,27 @@ class Druck(BaseSampler):
     debug : bool, optional, default False
         if True, prints debugging information.
     """
-    def __init__(self, alpha, oracle, predictions, scores, strata=None,
-                 max_iter=None, indices=None, replace=True, debug=False):
+    def __init__(self, alpha, predictions, oracle, scores, strata=None,
+                 max_iter=None, indices=None, replace=True, debug=False,
+                 **kwargs):
+        super(DruckSampler, self).__init__(alpha, predictions, oracle, 
+                                           max_iter, indices, replace, debug)
         self.scores = scores
-        self._original_strata = strata
-        self.strata = copy.deepcopy(strata)
-        self.replace = replace
-        self.debug = debug
+        self.strata = strata
 
-        #TODO construct strata if not given
-        #TODO don't require scores if strata is given?
-
-        self.n_sampled = np.zeros(self.strata.num_st, dtype=int)
+        # Generate strata if not given
+        if self.strata is None:
+            self.strata = auto_stratify(self.scores, kwargs)
 
     def _sample_item(self):
-        stratum_idx, sample_loc = self.strata.sample(prob_dist = None, replace = self.replace)
+        """
+        Samples an item from the strata
+        """
+        # Sample label and record weight
+        loc, stratum_idx = self.strata.sample(pmf = self.strata.weights)
 
-        #TODO convert to appropriate form
-
-        return loc, 1, {'stratum_idx':stratum_idx}
+        return loc, 1, {'stratum': stratum_idx}
 
     def reset(self):
-        super(PassiveSampler, self).reset()
-
-        self.strata = copy.deepcopy(self._original_strata)
-        self.n_sampled = np.zeros(self.strata.num_st, dtype=int)
-
-    def sample(self, n_iter):
-        """
-        Samples `n_iter` points
-        fixed_stratum :
-
-        """
-
-        for t in range(t_i, t_f):
-            # Check if there are any more points to sample
-
-            # TODO ensure that these extra steps are taken care of in the BaseSampler
-            # Or rewrite to ensure that they can be carried out here.
-            if (not self.replace and
-                    np.sum(self.strata.populations - self.n_sampled) == 0):
-                print("All points have been sampled")
-                return
-
-            self.n_sampled[stratum_idx] += 1
-
-            self.t = self.t + 1
-
-    def sample_until(self, n_goal):
-        """
-        Sample until `n_goal` labels are queried from the oracle
-        """
-
-        n_seen = np.sum(self.queried_oracle)
-
-        if n_seen >= n_goal:
-            print("Have already queried {} labels from the oracle".format(n_seen))
-            return
-
-        if n_goal > self.strata.num_pts + 1:
-            print("{} is greater than the number of points in the dataset".format(n_goal))
-            return
-
-        while n_seen < n_goal:
-            self.sample(1)
-            n_seen = n_seen + self.queried_oracle[self.t - 1]*1
+        super(DruckSampler, self).reset()
+        self.strata.reset()
