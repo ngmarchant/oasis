@@ -162,6 +162,10 @@ def auto_stratify(scores, **kwargs):
     **kwargs :
         optional keyword arguments. May include 'stratification_method',
         'stratification_n_strata', 'stratification_n_bins'.
+
+    Returns
+    -------
+    Strata instance
     """
     if 'stratification_method' in kwargs:
         method = kwargs['stratification_method']

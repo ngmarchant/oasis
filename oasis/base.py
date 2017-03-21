@@ -19,6 +19,7 @@ def is_pos_integer(number):
         return False
 
 class BaseSampler:
+    """Base class for all samplers"""
     def __init__(self, alpha, predictions, oracle, max_iter=None, indices=None,
                  debug=False):
         self.alpha = alpha

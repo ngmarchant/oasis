@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &#8212; OASIS 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="OASIS 0.1 documentation" href="../index.html" />
+    <link rel="prev" title="oasis.stratification.auto_stratify" href="../generated/oasis.stratification.auto_stratify.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="section" id="Tutorial">
+<h1>Tutorial<a class="headerlink" href="#Tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This Python notebook demonstrates how OASIS can be used to efficiently
+evaluate a classifier, based on an example dataset from the entity
+resolution domain.</p>
+<p>We begin by loading the required packages (including OASIS) and setting
+the random seeds for reproducability.</p>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>import numpy as np
+import random
+import oasis
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+np.random.seed(319158)
+random.seed(319158)
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example-dataset">
+<h2>Example dataset<a class="headerlink" href="#Example-dataset" title="Permalink to this headline">¶</a></h2>
+<p>The dataset we shall use for this tutorial is derived from the
+<code class="docutils literal"><span class="pre">Amazon-GoogleProducts</span></code> dataset available from
+<a class="reference external" href="http://dbs.uni-leipzig.de/en/research/projects/object_matching/fever/benchmark_datasets_for_entity_resolution">here</a>.
+It is described in the following publication:</p>
+<blockquote>
+<div>H. Köpcke, A. Thor, and E. Rahm. &#8220;Evaluation of entity resolution
+approaches on real-world match problems.&#8221; <em>Proceedings of the VLDB
+Endowment</em> 3.1-2 (2010): 484-493.</div></blockquote>
+<p>The dataset consists of product listings from two e-commerce websites:
+<em>Amazon</em> and <em>Google Products</em> (which no longer exists as of 2017). Our
+goal is to train a classifier to identify pairs of records across the
+two data sources which refer to the same products. This involves forming
+the cross join of the two data sources and classifying each pair of
+records as a &#8220;match&#8221; or &#8220;non-match&#8221;. Since the focus of this notebook is
+evaluation, we shall not demonstrate how to build the classifier here.
+Instead, we shall load the data from a classifier we prepared earlier.</p>
+<div class="section" id="Loading-the-data">
+<h3>Loading the data<a class="headerlink" href="#Loading-the-data" title="Permalink to this headline">¶</a></h3>
+<p>Using our pre-trained classifier, we calculated predictions and scores
+on a test set containing 676,267 record pairs. The data is stored in
+HDF5 format and is available in the GitHub repository.</p>
+<p>Below, we make use of the <code class="docutils literal"><span class="pre">Data</span></code> class in the OASIS package to read
+the HDF file into memory.</p>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>data = oasis.Data()
+data.read_h5(&#39;Amazon-GoogleProducts-test.h5&#39;)
+data.calc_true_performance() #: calculate true precision, recall, F1-score
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Evaluating-the-classifier">
+<h2>Evaluating the classifier<a class="headerlink" href="#Evaluating-the-classifier" title="Permalink to this headline">¶</a></h2>
+<p>Our goal is to estimate the F1-score of the classifier by sequentially
+labelling items in the test set. This example is somewhat contrived
+since we already know the ground truth labels (they are included with
+the test set). However, we can simulate the labelling by defining an
+oracle which looks up the labels as follows:</p>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>def oracle(idx):
+    return data.labels[idx]
+</pre></div>
+</div>
+</div>
+<p>In the following experiments, we shall adopt the parameter settings
+below:</p>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>alpha = 0.5      #: corresponds to F1-score
+n_labels = 5000  #: stop sampling after querying this number of labels
+max_iter = 1e6   #: maximum no. of iterations that can be stored
+</pre></div>
+</div>
+</div>
+<div class="section" id="OASIS">
+<h3>OASIS<a class="headerlink" href="#OASIS" title="Permalink to this headline">¶</a></h3>
+<p>Here we use the OASIS method to estimate the F1-score. The first step is
+to initialise the sampler.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>smplr = oasis.OASISSampler(alpha, data.preds, data.scores, oracle, max_iter=max_iter)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+Automatically setting n_bins = 2398.
+Automatically setting goal_num_strata = 63.
+</pre></div></div>
+</div>
+<p>Next we query <code class="docutils literal"><span class="pre">n_labels</span></code> sequentially.</p>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>smplr.sample_distinct(n_labels)
+</pre></div>
+</div>
+</div>
+<p>Finally, we plot the history of estimates to check for convergence.
+Since we already know the true value of the F1-score for this example
+(because we were given all of the labels in advance), we have indicated
+it on the plot using a red line.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>def plt_estimates(smplr, true_value):
+    plt.plot(smplr.estimate_[smplr.queried_oracle_])
+    plt.axhline(y=true_value, color=&#39;r&#39;)
+    plt.xlabel(&quot;Label budget&quot;)
+    plt.ylabel(&quot;Estimate of F1-score&quot;)
+    plt.ylim(0,1)
+    plt.show()
+
+plt_estimates(smplr, data.F1_measure)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/sections_tutorial_20_0.png" src="../_images/sections_tutorial_20_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Other-samplers">
+<h3>Other samplers<a class="headerlink" href="#Other-samplers" title="Permalink to this headline">¶</a></h3>
+<p>For comparison, we repeat the evaluation using two alternative sampling
+methods available in the OASIS package.</p>
+<p>First, we test the basic passive sampling method. It performs poorly due
+to the extreme class imbalance. Of the 5000 labels queried, none of them
+correspond to a true positive, yielding an incorrect estimate for the
+F1-score of 0.0.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>pass_smplr = oasis.PassiveSampler(alpha, data.preds, oracle, max_iter=max_iter)
+pass_smplr.sample_distinct(n_labels)
+plt_estimates(pass_smplr, data.F1_measure)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/sections_tutorial_24_0.png" src="../_images/sections_tutorial_24_0.png" />
+</div>
+</div>
+<p>The non-adaptive importance sampling method fares better, yielding a
+decent estimate after consuming 5000 labels. However, it takes
+significantly longer to converge than OASIS.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>is_smplr = oasis.ImportanceSampler(alpha, data.preds, data.scores, oracle, max_iter=max_iter)
+is_smplr.sample_distinct(n_labels)
+plt_estimates(is_smplr, data.F1_measure)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/sections_tutorial_26_0.png" src="../_images/sections_tutorial_26_0.png" />
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">OASIS</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oasis.html">OASIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other-samplers.html">Other samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-ref.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Example-dataset">Example dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Evaluating-the-classifier">Evaluating the classifier</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../generated/oasis.stratification.auto_stratify.html" title="previous chapter"><code class="docutils literal"><span class="pre">oasis.stratification</span></code>.auto_stratify</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Neil G. Marchant.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/sections/tutorial.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

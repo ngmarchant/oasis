@@ -33,15 +33,14 @@ sys.path.insert(0, os.path.abspath('../'))
 # ones.
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.githubpages',
+    'nbsphinx',
     'numpydoc']
 
-autosummary_generate = True
+#autosummary_generate = True
+autosummary_generate = ['generated/oasis.DruckSampler.rst', 'generated/oasis.ImportanceSampler.rst', 'generated/oasis.OASISSampler.rst', 'generated/oasis.PassiveSampler.rst', 'generated/oasis.base.BaseSampler.rst', 'generated/oasis.stratification.Strata.rst', 'generated/oasis.stratification.auto_stratify.rst', 'generated/oasis.stratification.stratify_by_features.rst', 'generated/oasis.stratification.stratify_by_scores.rst', 'index.rst', 'installation.rst', 'sections/api-ref.rst', 'sections/oasis.rst', 'sections/other-samplers.rst']
 
 autodoc_default_flags = ['members', 'inherited-members']
 
@@ -52,7 +51,7 @@ templates_path = ['ntemplates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.ipynb']
 
 # The master toctree document.
 master_doc = 'index'
@@ -108,6 +107,15 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['nstatic']
 
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
+    ]
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -164,6 +172,3 @@ texinfo_documents = [
      author, 'OASIS', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to OASIS’s documentation! &#8212; OASIS 0.1 documentation</title>
+    <title>OASIS: a tool for efficient evaluation of classifiers &#8212; OASIS 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -27,7 +27,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="OASIS 0.1 documentation" href="#" />
-    <link rel="next" title="oasis.OASISSampler" href="generated/oasis.OASISSampler.html" />
+    <link rel="next" title="Installation" href="installation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -43,38 +43,53 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-oasis-s-documentation">
-<h1>Welcome to OASIS&#8217;s documentation!<a class="headerlink" href="#welcome-to-oasis-s-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound" id="contents">
+  <div class="section" id="oasis-a-tool-for-efficient-evaluation-of-classifiers">
+<h1>OASIS: a tool for efficient evaluation of classifiers<a class="headerlink" href="#oasis-a-tool-for-efficient-evaluation-of-classifiers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>OASIS is a tool for evaluating binary classifiers when ground truth class
+labels are not immediately available, but can be obtained at some cost (e.g.
+by asking humans). The tool takes an unlabelled test set as input and
+intelligently selects items to label so as to provide a <em>precise</em> estimate of
+the classifier&#8217;s performance, whilst <em>minimising</em> the amount of labelling
+required. The underlying strategy for selecting the items to label is based on
+a technique called <em>adaptive importance sampling</em>, which is optimised for the
+classifier performance measure of interest. Currently, OASIS supports
+estimation of the weighted F-measure, which includes the F1-score, precision
+and recall.</p>
 </div>
-<span class="target" id="module-oasis.passive"></span><table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/oasis.OASISSampler.html#oasis.OASISSampler" title="oasis.OASISSampler"><code class="xref py py-obj docutils literal"><span class="pre">OASISSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;scores,&nbsp;oracle)</td>
-<td>Adaptive importance sampling for estimation of the weighted F-measure</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/oasis.PassiveSampler.html#oasis.PassiveSampler" title="oasis.PassiveSampler"><code class="xref py py-obj docutils literal"><span class="pre">PassiveSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;oracle[,&nbsp;...])</td>
-<td>Passive sampling for estimation of the weighted F-measure</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/oasis.ImportanceSampler.html#oasis.ImportanceSampler" title="oasis.ImportanceSampler"><code class="xref py py-obj docutils literal"><span class="pre">ImportanceSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;...[,&nbsp;...])</td>
-<td>Importance sampling for estimation of the weighted F-measure</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/oasis.DruckSampler.html#oasis.DruckSampler" title="oasis.DruckSampler"><code class="xref py py-obj docutils literal"><span class="pre">DruckSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;scores,&nbsp;oracle)</td>
-<td>Stratified sampling for estimation of the weighted F-measure</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="when-should-i-use-oasis">
+<h2>When should I use OASIS?<a class="headerlink" href="#when-should-i-use-oasis" title="Permalink to this headline">¶</a></h2>
+<p>OASIS is particularly useful when:</p>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li>you have a test set, but you don&#8217;t yet have ground truth labels</li>
+<li>ground truth labels can be obtained sequentially (this constraint may be
+relaxed in a future update)</li>
+<li>F1-score, precision, or recall is a sufficient measure for the classifier&#8217;s
+performance</li>
+<li>the classification problem demonstrates a high degree of class imbalance
+(examples include entity resolution, text classification and many problems in
+the medical domain)</li>
 </ul>
+<p>Note that the final point to do with class imbalance does not need to be
+satisifed in order for OASIS to provide accurate estimates of classifier
+performance. It merely describes when OASIS is expected to excel over simpler
+methods, such as uniform sampling (see <a class="reference internal" href="sections/other-samplers.html#passive-sampler"><span class="std std-ref">Passive sampler</span></a>).</p>
+</div>
+<div class="section" id="where-can-i-find-out-more">
+<h2>Where can I find out more?<a class="headerlink" href="#where-can-i-find-out-more" title="Permalink to this headline">¶</a></h2>
+<p>Details about the interface for OASIS, including the required inputs are given
+in the <a class="reference internal" href="sections/oasis.html#oasis"><span class="std std-ref">OASIS</span></a> section of this documentation. For more information about
+the algorithm itself and a proof of its consistency, please refer to the
+following paper:</p>
+<blockquote id="marchant-17">
+<div>N. G. Marchant and B. I. P. Rubinstein, In Search of an Entity Resolution
+OASIS: Optimal Asymptotic Sequential Importance Sampling,
+arXiv:1703.00617 [cs.LG], Mar 2017.
+<a class="reference external" href="https://arxiv.org/pdf/1703.00617.pdf">link</a></div></blockquote>
+<div class="toctree-wrapper compound">
+</div>
+</div>
 </div>
 
 
@@ -83,28 +98,32 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to OASIS&#8217;s documentation!</a><ul>
+<h1 class="logo"><a href="#">OASIS</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sections/oasis.html">OASIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sections/other-samplers.html">Other samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sections/api-ref.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sections/tutorial.html">Tutorial</a></li>
 </ul>
-</li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="generated/oasis.OASISSampler.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis</span></code>.OASISSampler</a></li>
+      <li>Next: <a href="installation.html" title="next chapter">Installation</a></li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

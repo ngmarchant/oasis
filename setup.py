@@ -17,7 +17,8 @@ setup(name='oasis',
     install_requires=[
         'numpy',
         'tables',
-        'scipy'
+        'scipy',
+        'sklearn'
     ],
     include_package_data=True,
     zip_safe=False)

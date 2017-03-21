@@ -171,7 +171,7 @@ class Data:
 
         h5_file = tables.open_file(h5_path, mode = 'r')
 
-        if load_features:
+        if load_features and hasattr(h5_file.root, "features"):
             self.features = h5_file.root.features[:,:]
             self.num_fts = h5_file.root.features.shape[1]
         if hasattr(h5_file.root, "labels"):
@@ -182,8 +182,7 @@ class Data:
             self.probs = h5_file.root.probs[:]
         if hasattr(h5_file.root, "preds"):
             self.preds = h5_file.root.preds[:]
-
-        self.num_items = h5_file.root.features.shape[0]
+            self.num_items = len(self.preds)
 
         h5_file.close()
 
