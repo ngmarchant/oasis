@@ -9,7 +9,8 @@
    .. automethod:: __init__
    
 
-.. include:: oasis.ImportanceSampler.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.ImportanceSampler.examples
 
 .. raw:: html
 

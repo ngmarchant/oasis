@@ -51,8 +51,8 @@ following paper:
     :maxdepth: 2
     :hidden:
 
-    installation.rst
+    sections/installation.rst
     sections/oasis.rst
     sections/other-samplers.rst
     sections/api-ref.rst
-    sections/tutorial.ipynb
+    tutorial/tutorial.ipynb

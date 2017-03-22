@@ -5,7 +5,8 @@
 
 .. autofunction:: {{ objname }}
 
-.. include:: {{module}}.{{objname}}.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: {{module}}.{{objname}}.examples
 
 .. raw:: html
 

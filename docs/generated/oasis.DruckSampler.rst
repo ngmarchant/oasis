@@ -9,7 +9,8 @@
    .. automethod:: __init__
    
 
-.. include:: oasis.DruckSampler.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.DruckSampler.examples
 
 .. raw:: html
 

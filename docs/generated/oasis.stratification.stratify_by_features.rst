@@ -5,7 +5,8 @@
 
 .. autofunction:: stratify_by_features
 
-.. include:: oasis.stratification.stratify_by_features.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.stratification.stratify_by_features.examples
 
 .. raw:: html
 

@@ -9,7 +9,8 @@
    .. automethod:: __init__
    
 
-.. include:: oasis.stratification.Strata.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.stratification.Strata.examples
 
 .. raw:: html
 

@@ -5,7 +5,8 @@
 
 .. autofunction:: stratify_by_scores
 
-.. include:: oasis.stratification.stratify_by_scores.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.stratification.stratify_by_scores.examples
 
 .. raw:: html
 

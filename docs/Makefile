@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = OASIS
 SOURCEDIR     = .
-BUILDDIR      = nbuild
+BUILDDIR      = ../../oasis-docs
 
 # Put it first so that "make" without argument is like "make help".
 help:

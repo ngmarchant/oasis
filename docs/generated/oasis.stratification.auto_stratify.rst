@@ -5,7 +5,8 @@
 
 .. autofunction:: auto_stratify
 
-.. include:: oasis.stratification.auto_stratify.examples
+.. Not needed since there is no "Examples" section in the docstrings
+.. .. include:: oasis.stratification.auto_stratify.examples
 
 .. raw:: html
 
