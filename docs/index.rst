@@ -47,6 +47,19 @@ following paper:
     arXiv:1703.00617 [cs.LG], Mar 2017.
     `link <https://arxiv.org/pdf/1703.00617.pdf>`_
 
+License and disclaimer
+======================
+OASIS is released under the MIT license. Please see the LICENSE file included
+with the source.
+
+The software is provided "as is", without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and noninfringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other
+liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with the software or the use or other dealings in the
+software.
+
 .. toctree::
     :maxdepth: 2
     :hidden:
