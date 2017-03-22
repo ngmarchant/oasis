@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>oasis.stratification.Strata &#8212; OASIS c72aa1e documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'c72aa1e',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="OASIS c72aa1e documentation" href="../index.html" />
+    <link rel="up" title="API Reference" href="../sections/api-ref.html" />
+    <link rel="next" title="oasis.stratification.stratify_by_scores" href="oasis.stratification.stratify_by_scores.html" />
+    <link rel="prev" title="oasis.PassiveSampler" href="oasis.PassiveSampler.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="oasis-stratification-strata">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">oasis.stratification</span></code>.Strata<a class="headerlink" href="#oasis-stratification-strata" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="oasis.stratification.Strata">
+<em class="property">class </em><code class="descclassname">oasis.stratification.</code><code class="descname">Strata</code><span class="sig-paren">(</span><em>allocations</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a collection of strata and facilitates sampling from them</p>
+<p>This class takes an array of prescribed stratum allocations for a finite
+pool and stores the information in a form that is convenient for
+sampling. The items in the pool are referred to uniquely by their location
+in the input array. An item may be sampled from the strata (according to an
+arbitrary distribution over the strata) using the <cite>sample</cite> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>allocations</strong> : array-like, shape=(pool_size,)</p>
+<blockquote class="last">
+<div><p>ordered array of ints or strs which specifies the name/identifier of
+the allocated stratum for each item in the pool.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="96%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a href="#id1"><span class="problematic" id="id2">allocations_</span></a></td>
+<td>(list of numpy.ndarrays, length num_strata) represents the items contained within each stratum using a list of arrays. Each array in the list refers to a particular stratum, and stores the items contained within that stratum. Items are referred to by their location in the input array.</td>
+</tr>
+<tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">num_strata_</span></a></td>
+<td>(int) number of strata</td>
+</tr>
+<tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">pool_size_</span></a></td>
+<td>(int) number of items in the pool (i.e. in all of the strata)</td>
+</tr>
+<tr class="row-even"><td><a href="#id7"><span class="problematic" id="id8">names_</span></a></td>
+<td>(numpy.ndarray, shape=(num_strata,)) array containing names/identifiers for each stratum</td>
+</tr>
+<tr class="row-odd"><td><a href="#id9"><span class="problematic" id="id10">indices_</span></a></td>
+<td>(numpy.ndarray, shape=(num_strata,)) array containing unique indices for each stratum</td>
+</tr>
+<tr class="row-even"><td><a href="#id11"><span class="problematic" id="id12">sizes_</span></a></td>
+<td>(numpy.ndarray, shape=(num_strata,)) array specifying how many items are contained with each stratum</td>
+</tr>
+<tr class="row-odd"><td><a href="#id13"><span class="problematic" id="id14">weights_</span></a></td>
+<td>(numpy.ndarray, shape=(num_strata,)) array specifying the stratum weights (sizes/pool_size)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">intra_mean</span></code>(values)</td>
+<td>Calculate the mean of a quantity within strata</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
+<td>Reset the instance to begin sampling from scratch</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>([pmf,&nbsp;replace])</td>
+<td>Sample an item from the strata</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="oasis.stratification.Strata.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>allocations</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="clearer"></div></div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">OASIS</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ngmarchant&repo=oasis&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../sections/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sections/oasis.html">OASIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sections/other-samplers.html">Other samplers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sections/api-ref.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sections/api-ref.html#samplers-for-evaluation">Samplers for Evaluation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sections/api-ref.html#stratification">Stratification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tutorial.html">Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../sections/api-ref.html">API Reference</a><ul>
+      <li>Previous: <a href="oasis.PassiveSampler.html" title="previous chapter"><code class="docutils literal"><span class="pre">oasis</span></code>.PassiveSampler</a></li>
+      <li>Next: <a href="oasis.stratification.stratify_by_scores.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis.stratification</span></code>.stratify_by_scores</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Neil G. Marchant.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/generated/oasis.stratification.Strata.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/ngmarchant/oasis" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

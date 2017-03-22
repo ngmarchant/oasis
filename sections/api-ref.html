@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &#8212; OASIS c72aa1e documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'c72aa1e',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="OASIS c72aa1e documentation" href="../index.html" />
+    <link rel="next" title="oasis.base.BaseSampler" href="../generated/oasis.base.BaseSampler.html" />
+    <link rel="prev" title="Other samplers" href="other-samplers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-reference">
+<span id="api-ref"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="samplers-for-evaluation">
+<span id="evaluation-ref"></span><h2>Samplers for Evaluation<a class="headerlink" href="#samplers-for-evaluation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.base.BaseSampler.html#oasis.base.BaseSampler" title="oasis.base.BaseSampler"><code class="xref py py-obj docutils literal"><span class="pre">base.BaseSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;oracle)</td>
+<td>Base class for all samplers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/oasis.OASISSampler.html#oasis.OASISSampler" title="oasis.OASISSampler"><code class="xref py py-obj docutils literal"><span class="pre">OASISSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;scores,&nbsp;oracle)</td>
+<td>Adaptive importance sampling for estimation of the weighted F-measure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.ImportanceSampler.html#oasis.ImportanceSampler" title="oasis.ImportanceSampler"><code class="xref py py-obj docutils literal"><span class="pre">ImportanceSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;...[,&nbsp;...])</td>
+<td>Importance sampling for estimation of the weighted F-measure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/oasis.DruckSampler.html#oasis.DruckSampler" title="oasis.DruckSampler"><code class="xref py py-obj docutils literal"><span class="pre">DruckSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;scores,&nbsp;oracle)</td>
+<td>Stratified sampling for estimation of the weighted F-measure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.PassiveSampler.html#oasis.PassiveSampler" title="oasis.PassiveSampler"><code class="xref py py-obj docutils literal"><span class="pre">PassiveSampler</span></code></a>(alpha,&nbsp;predictions,&nbsp;oracle[,&nbsp;...])</td>
+<td>Passive sampling for estimation of the weighted F-measure</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="stratification">
+<span id="stratification-ref"></span><h2>Stratification<a class="headerlink" href="#stratification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.stratification.Strata.html#oasis.stratification.Strata" title="oasis.stratification.Strata"><code class="xref py py-obj docutils literal"><span class="pre">stratification.Strata</span></code></a>(allocations)</td>
+<td>Represents a collection of strata and facilitates sampling from them</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.stratification.stratify_by_scores.html#oasis.stratification.stratify_by_scores" title="oasis.stratification.stratify_by_scores"><code class="xref py py-obj docutils literal"><span class="pre">stratification.stratify_by_scores</span></code></a>(scores[,&nbsp;...])</td>
+<td>Stratify by binning the items based on their scores</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/oasis.stratification.stratify_by_features.html#oasis.stratification.stratify_by_features" title="oasis.stratification.stratify_by_features"><code class="xref py py-obj docutils literal"><span class="pre">stratification.stratify_by_features</span></code></a>(...)</td>
+<td>Stratify by clustering the items in feature space</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/oasis.stratification.auto_stratify.html#oasis.stratification.auto_stratify" title="oasis.stratification.auto_stratify"><code class="xref py py-obj docutils literal"><span class="pre">stratification.auto_stratify</span></code></a>(scores,&nbsp;\*\*kwargs)</td>
+<td>Generate Strata instance automatically</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">OASIS</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ngmarchant&repo=oasis&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oasis.html">OASIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other-samplers.html">Other samplers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#samplers-for-evaluation">Samplers for Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stratification">Stratification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tutorial.html">Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="other-samplers.html" title="previous chapter">Other samplers</a></li>
+      <li>Next: <a href="../generated/oasis.base.BaseSampler.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis.base</span></code>.BaseSampler</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Neil G. Marchant.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/sections/api-ref.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/ngmarchant/oasis" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
