@@ -14,9 +14,11 @@ and recall.
 
 Important links
 ===============
-Documentation: `https://ngmarchant.github.io/oasis`_
-Source: `https://www.github.com/ngmarchant/oasis`_
-Technical paper: `https://arxiv.org/pdf/1703.00617.pdf`_
+Documentation: https://ngmarchant.github.io/oasis
+
+Source: https://www.github.com/ngmarchant/oasis
+
+Technical paper: https://arxiv.org/pdf/1703.00617.pdf
 
 Example
 =======
@@ -34,4 +36,5 @@ See the Jupyter notebook under ``docs/tutorial/tutorial.ipynb``::
 
 License and disclaimer
 ======================
-.. include:: LICENSE
+The code is released under the MIT license. Please see the LICENSE file for
+details.
