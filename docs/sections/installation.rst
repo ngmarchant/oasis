@@ -10,7 +10,8 @@ Installation from source
 Currently the package must be installed from source, although in future it may
 be available on PyPI.
 
-To clone the source from Github, execute the following command::
+To clone the source from `GitHub <https://www.github.com/ngmarchant/oasis>`_,
+execute the following command::
 
     $ git clone https://github.com/ngmarchant/oasis.git
 
@@ -26,6 +27,6 @@ OASIS depends on the following Python packages:
 * numpy
 * scipy
 * sklearn
-* tables (for experiments)
+* tables (to use :class:`Data` container)
 
 These dependencies should be automatically resolved during installation.
