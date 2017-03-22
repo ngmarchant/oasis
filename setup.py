@@ -9,7 +9,7 @@ setup(name='oasis',
     description='Optimal Asymptotic Sequential Importance Sampling',
     long_description=readme(),
     keywords='F-measure active sampling evaluation classification recall precision',
-    url='http://github.com/ngmarchant/oasis',
+    url='http://ngmarchant.github.io/oasis',
     author='Neil G. Marchant',
     author_email='ngmarchant@gmail.com',
     license='MIT',
@@ -21,4 +21,12 @@ setup(name='oasis',
         'sklearn'
     ],
     include_package_data=True,
-    zip_safe=False)
+    zip_safe=False,
+    classifiers=['Intended Audience :: Science/Research',
+                 'License :: OSI Approved :: MIT License',
+                 'Programming Language :: Python',
+                 'Topic :: Software Development',
+                 'Topic :: Scientific/Engineering',
+                 'Topic :: Scientific/Engineering :: Artificial Intelligence',
+                 'Programming Language :: Python :: 3',]
+    )
