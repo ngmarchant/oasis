@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &#8212; OASIS ba86da6 documentation</title>
+    <title>Tutorial &#8212; OASIS 6abf561 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,10 +14,11 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'ba86da6',
+        VERSION:     '6abf561',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -26,7 +27,6 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="OASIS ba86da6 documentation" href="../index.html" />
     <link rel="prev" title="oasis.stratification.auto_stratify" href="../generated/oasis.stratification.auto_stratify.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -212,20 +212,20 @@ evaluate a classifier, based on an example dataset from the entity
 resolution domain.</p>
 <p>We begin by loading the required packages (including OASIS) and setting
 the random seeds for reproducability.</p>
-<div class="nbinput nblast container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>import numpy as np
-import random
-import oasis
-import matplotlib.pyplot as plt
-%matplotlib inline
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">oasis</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 
-np.random.seed(319158)
-random.seed(319158)
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">319158</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">319158</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -254,15 +254,15 @@ on a test set containing 676,267 record pairs. The data is stored in
 HDF5 format and is available in the GitHub repository.</p>
 <p>Below, we make use of the <code class="docutils literal"><span class="pre">Data</span></code> class in the OASIS package to read
 the HDF file into memory.</p>
-<div class="nbinput nblast container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>data = oasis.Data()
-data.read_h5(&#39;Amazon-GoogleProducts-test.h5&#39;)
-data.calc_true_performance() #: calculate true precision, recall, F1-score
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">oasis</span><span class="o">.</span><span class="n">Data</span><span class="p">()</span>
+<span class="n">data</span><span class="o">.</span><span class="n">read_h5</span><span class="p">(</span><span class="s1">&#39;Amazon-GoogleProducts-test.h5&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">calc_true_performance</span><span class="p">()</span> <span class="c1">#: calculate true precision, recall, F1-score</span>
 </pre></div>
 </div>
 </div>
@@ -275,28 +275,28 @@ labelling items in the test set. This example is somewhat contrived
 since we already know the ground truth labels (they are included with
 the test set). However, we can simulate the labelling by defining an
 oracle which looks up the labels as follows:</p>
-<div class="nbinput nblast container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>def oracle(idx):
-    return data.labels[idx]
+<span></span><span class="k">def</span> <span class="nf">oracle</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <p>In the following experiments, we shall adopt the parameter settings
 below:</p>
-<div class="nbinput nblast container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>alpha = 0.5      #: corresponds to F1-score
-n_labels = 5000  #: stop sampling after querying this number of labels
-max_iter = 1e6   #: maximum no. of iterations that can be stored
+<span></span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>      <span class="c1">#: corresponds to F1-score</span>
+<span class="n">n_labels</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1">#: stop sampling after querying this number of labels</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mf">1e6</span>   <span class="c1">#: maximum no. of iterations that can be stored</span>
 </pre></div>
 </div>
 </div>
@@ -304,33 +304,33 @@ max_iter = 1e6   #: maximum no. of iterations that can be stored
 <h3>OASIS<a class="headerlink" href="#OASIS" title="Permalink to this headline">¶</a></h3>
 <p>Here we use the OASIS method to estimate the F1-score. The first step is
 to initialise the sampler.</p>
-<div class="nbinput container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>smplr = oasis.OASISSampler(alpha, data.preds, data.scores, oracle, max_iter=max_iter)
+<span></span><span class="n">smplr</span> <span class="o">=</span> <span class="n">oasis</span><span class="o">.</span><span class="n">OASISSampler</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">preds</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span> <span class="n">oracle</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
 </div>
-<div class="output_area container">
+<div class="output_area docutils container">
 <div class="highlight"><pre>
 Automatically setting n_bins = 2398.
 Automatically setting goal_num_strata = 63.
 </pre></div></div>
 </div>
 <p>Next we query <code class="docutils literal"><span class="pre">n_labels</span></code> sequentially.</p>
-<div class="nbinput nblast container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>smplr.sample_distinct(n_labels)
+<span></span><span class="n">smplr</span><span class="o">.</span><span class="n">sample_distinct</span><span class="p">(</span><span class="n">n_labels</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -338,28 +338,28 @@ Automatically setting goal_num_strata = 63.
 Since we already know the true value of the F1-score for this example
 (because we were given all of the labels in advance), we have indicated
 it on the plot using a red line.</p>
-<div class="nbinput container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>def plt_estimates(smplr, true_value):
-    plt.plot(smplr.estimate_[smplr.queried_oracle_])
-    plt.axhline(y=true_value, color=&#39;r&#39;)
-    plt.xlabel(&quot;Label budget&quot;)
-    plt.ylabel(&quot;Estimate of F1-score&quot;)
-    plt.ylim(0,1)
-    plt.show()
+<span></span><span class="k">def</span> <span class="nf">plt_estimates</span><span class="p">(</span><span class="n">smplr</span><span class="p">,</span> <span class="n">true_value</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smplr</span><span class="o">.</span><span class="n">estimate_</span><span class="p">[</span><span class="n">smplr</span><span class="o">.</span><span class="n">queried_oracle_</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">true_value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Label budget&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Estimate of F1-score&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-plt_estimates(smplr, data.F1_measure)
+<span class="n">plt_estimates</span><span class="p">(</span><span class="n">smplr</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">F1_measure</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
 </div>
-<div class="output_area container">
+<div class="output_area docutils container">
 <img alt="../_images/tutorial_tutorial_20_0.png" src="../_images/tutorial_tutorial_20_0.png" />
 </div>
 </div>
@@ -372,44 +372,44 @@ methods available in the OASIS package.</p>
 to the extreme class imbalance. Of the 5000 labels queried, none of them
 correspond to a true positive, yielding an incorrect estimate for the
 F1-score of 0.0.</p>
-<div class="nbinput container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>pass_smplr = oasis.PassiveSampler(alpha, data.preds, oracle, max_iter=max_iter)
-pass_smplr.sample_distinct(n_labels)
-plt_estimates(pass_smplr, data.F1_measure)
+<span></span><span class="n">pass_smplr</span> <span class="o">=</span> <span class="n">oasis</span><span class="o">.</span><span class="n">PassiveSampler</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">preds</span><span class="p">,</span> <span class="n">oracle</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+<span class="n">pass_smplr</span><span class="o">.</span><span class="n">sample_distinct</span><span class="p">(</span><span class="n">n_labels</span><span class="p">)</span>
+<span class="n">plt_estimates</span><span class="p">(</span><span class="n">pass_smplr</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">F1_measure</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
 </div>
-<div class="output_area container">
+<div class="output_area docutils container">
 <img alt="../_images/tutorial_tutorial_24_0.png" src="../_images/tutorial_tutorial_24_0.png" />
 </div>
 </div>
 <p>The non-adaptive importance sampling method fares better, yielding a
 decent estimate after consuming 5000 labels. However, it takes
 significantly longer to converge than OASIS.</p>
-<div class="nbinput container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>is_smplr = oasis.ImportanceSampler(alpha, data.preds, data.scores, oracle, max_iter=max_iter)
-is_smplr.sample_distinct(n_labels)
-plt_estimates(is_smplr, data.F1_measure)
+<span></span><span class="n">is_smplr</span> <span class="o">=</span> <span class="n">oasis</span><span class="o">.</span><span class="n">ImportanceSampler</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">preds</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span> <span class="n">oracle</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+<span class="n">is_smplr</span><span class="o">.</span><span class="n">sample_distinct</span><span class="p">(</span><span class="n">n_labels</span><span class="p">)</span>
+<span class="n">plt_estimates</span><span class="p">(</span><span class="n">is_smplr</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">F1_measure</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
 </div>
-<div class="output_area container">
+<div class="output_area docutils container">
 <img alt="../_images/tutorial_tutorial_26_0.png" src="../_images/tutorial_tutorial_26_0.png" />
 </div>
 </div>
@@ -478,11 +478,11 @@ plt_estimates(is_smplr, data.F1_measure)
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/tutorial/tutorial.txt"
+      <a href="../_sources/tutorial/tutorial.ipynb.txt"
           rel="nofollow">Page source</a>
     </div>
 
