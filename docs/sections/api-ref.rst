@@ -17,7 +17,6 @@ Classes
    :toctree: ../generated
    :template: class.rst
 
-   base.BaseSampler
    OASISSampler
    ImportanceSampler
    DruckSampler
