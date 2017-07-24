@@ -7,7 +7,7 @@ OASIS: a tool for efficient evaluation of classifiers
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://opensource.org/licenses/MIT
 .. image:: https://badge.fury.io/py/oasis.svg
-    :target: https://pypi.python.org/pypi/betterbib
+    :target: https://pypi.python.org/pypi/oasis
 
 Overview
 ========
