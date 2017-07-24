@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>oasis.stratification.Strata &#8212; OASIS 6abf561 documentation</title>
+    <title>oasis.stratification.Strata &#8212; OASIS f8ab73f documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '6abf561',
+        VERSION:     'f8ab73f',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -59,7 +59,7 @@ arbitrary distribution over the strata) using the <cite>sample</cite> method.</p
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>allocations</strong> : array-like, shape=(pool_size,)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>allocations</strong> : array-like, shape=(n_items,)</p>
 <blockquote class="last">
 <div><p>ordered array of ints or strs which specifies the name/identifier of
 the allocated stratum for each item in the pool.</p>
@@ -76,25 +76,25 @@ the allocated stratum for each item in the pool.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a href="#id1"><span class="problematic" id="id2">allocations_</span></a></td>
-<td>(list of numpy.ndarrays, length num_strata) represents the items contained within each stratum using a list of arrays. Each array in the list refers to a particular stratum, and stores the items contained within that stratum. Items are referred to by their location in the input array.</td>
+<td>(list of numpy.ndarrays, length n_strata) represents the items contained within each stratum using a list of arrays. Each array in the list refers to a particular stratum, and stores the items contained within that stratum. Items are referred to by their location in the input array.</td>
 </tr>
-<tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">num_strata_</span></a></td>
+<tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">n_strata_</span></a></td>
 <td>(int) number of strata</td>
 </tr>
-<tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">pool_size_</span></a></td>
+<tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">n_items_</span></a></td>
 <td>(int) number of items in the pool (i.e. in all of the strata)</td>
 </tr>
 <tr class="row-even"><td><a href="#id7"><span class="problematic" id="id8">names_</span></a></td>
-<td>(numpy.ndarray, shape=(num_strata,)) array containing names/identifiers for each stratum</td>
+<td>(numpy.ndarray, shape=(n_strata,)) array containing names/identifiers for each stratum</td>
 </tr>
 <tr class="row-odd"><td><a href="#id9"><span class="problematic" id="id10">indices_</span></a></td>
-<td>(numpy.ndarray, shape=(num_strata,)) array containing unique indices for each stratum</td>
+<td>(numpy.ndarray, shape=(n_strata,)) array containing unique indices for each stratum</td>
 </tr>
 <tr class="row-even"><td><a href="#id11"><span class="problematic" id="id12">sizes_</span></a></td>
-<td>(numpy.ndarray, shape=(num_strata,)) array specifying how many items are contained with each stratum</td>
+<td>(numpy.ndarray, shape=(n_strata,)) array specifying how many items are contained with each stratum</td>
 </tr>
 <tr class="row-odd"><td><a href="#id13"><span class="problematic" id="id14">weights_</span></a></td>
-<td>(numpy.ndarray, shape=(num_strata,)) array specifying the stratum weights (sizes/pool_size)</td>
+<td>(numpy.ndarray, shape=(n_strata,)) array specifying the stratum weights (sizes/n_items)</td>
 </tr>
 </tbody>
 </table>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>OASIS &#8212; OASIS 6abf561 documentation</title>
+    <title>OASIS &#8212; OASIS f8ab73f documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '6abf561',
+        VERSION:     'f8ab73f',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -69,18 +69,30 @@ for more detailed information.</p>
 <ol class="arabic simple">
 <li><code class="docutils literal"><span class="pre">alpha</span></code>: the F-measure weight as defined above</li>
 <li><code class="docutils literal"><span class="pre">predictions</span></code>: predicted labels for the items in the pool (according to the
-classifier)</li>
+classifier(s))</li>
 <li><code class="docutils literal"><span class="pre">scores</span></code>: classifier scores for the items in the pool (e.g. estimated
 positive class probability, distance from decision boundary)</li>
 <li><code class="docutils literal"><span class="pre">oracle</span></code>: a function which returns ground truth labels for items in the
 pool (i.e. an interface to a labeller)</li>
 </ol>
-<p>For convenience of implementation, OASIS assumes that the items in the pool are
-assigned indices in <span class="math">\(\{0, 1, ..., N-1\}\)</span> where <span class="math">\(N\)</span> is the size of
-the pool. The <code class="docutils literal"><span class="pre">predictions</span></code> and <code class="docutils literal"><span class="pre">scores</span></code> inputs are assumed to be arrays,
-ordered by item index. The <code class="docutils literal"><span class="pre">oracle</span></code> function is also defined in terms of the
-item indices. It should take an index as input and return the true label of the
-corresponding item (i.e. integer &#8220;0&#8221; or &#8220;1&#8221;).</p>
+<div class="section" id="multiple-classifiers">
+<h3>Multiple classifiers<a class="headerlink" href="#multiple-classifiers" title="Permalink to this headline">¶</a></h3>
+<p>OASIS supports evaluating multiple classifiers on the same test set
+<em>in parallel</em>. It will optimise the sampling strategy to ensure that the
+performance estimates for all of the classifiers have minimal variance.
+To use this functionality, simply pass two-dimensional arrays for the
+<code class="docutils literal"><span class="pre">predictions</span></code> and <code class="docutils literal"><span class="pre">scores</span></code> inputs. The rows of these arrays should
+correspond to the items and the columns should correspond to the different
+classifiers.</p>
+</div>
+<div class="section" id="item-identifiers">
+<h3>Item identifiers<a class="headerlink" href="#item-identifiers" title="Permalink to this headline">¶</a></h3>
+<p>OASIS permits the use of custom unique identifiers for the items in the pool.
+Simply pass an array to the <code class="docutils literal"><span class="pre">identifiers</span></code> argument. If custom identifiers are
+provided, they will be used when making queries to the oracle function.
+Otherwise OASIS will refer to the items in the pool according to their index
+in the input <code class="docutils literal"><span class="pre">predictions</span></code>/<code class="docutils literal"><span class="pre">scores</span></code> arrays.</p>
+</div>
 </div>
 <div class="section" id="other-parameters">
 <h2>Other parameters<a class="headerlink" href="#other-parameters" title="Permalink to this headline">¶</a></h2>
@@ -137,11 +149,12 @@ estimate of the F-measure to see whether it is converging. The history of
 estimates (for each iteration) is stored in the <code class="docutils literal"><span class="pre">estimate_</span></code> attribute.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">There exists an alternative method to <code class="docutils literal"><span class="pre">sample</span></code> called <code class="docutils literal"><span class="pre">sample_distinct</span></code>.
+<p class="last">There exists an alternative method to <code class="docutils literal"><span class="pre">sample</span></code> called
+<code class="docutils literal"><span class="pre">sample_distinct</span></code>, which is useful when sampling with replacement.
 This method continues to sample from the pool until a given number of
-<strong>distinct</strong> items (i.e. previously unsampled items) have been sampled.
+<strong>distinct</strong> items (i.e. previously unlabelled items) have been sampled.
 This differs from <code class="docutils literal"><span class="pre">sample</span></code>, which doesn&#8217;t distinguish between previously
-sampled/unsampled items.</p>
+labelled/unlabelled items.</p>
 </div>
 </div>
 </div>

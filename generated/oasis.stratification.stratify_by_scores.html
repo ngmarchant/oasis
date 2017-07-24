@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>oasis.stratification.stratify_by_scores &#8212; OASIS 6abf561 documentation</title>
+    <title>oasis.stratification.stratify_by_scores &#8212; OASIS f8ab73f documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '6abf561',
+        VERSION:     'f8ab73f',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -48,19 +48,19 @@
 <h1><code class="xref py py-mod docutils literal"><span class="pre">oasis.stratification</span></code>.stratify_by_scores<a class="headerlink" href="#oasis-stratification-stratify-by-scores" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="oasis.stratification.stratify_by_scores">
-<code class="descclassname">oasis.stratification.</code><code class="descname">stratify_by_scores</code><span class="sig-paren">(</span><em>scores</em>, <em>goal_num_strata='auto'</em>, <em>method='cum_sqrt_F'</em>, <em>n_bins='auto'</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.stratify_by_scores" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">oasis.stratification.</code><code class="descname">stratify_by_scores</code><span class="sig-paren">(</span><em>scores</em>, <em>goal_n_strata='auto'</em>, <em>method='cum_sqrt_F'</em>, <em>n_bins='auto'</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.stratify_by_scores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stratify by binning the items based on their scores</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>scores</strong> : array-like, shape=(pool_size,)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>scores</strong> : array-like, shape=(n_items,)</p>
 <blockquote>
 <div><p>ordered array of scores which quantify the classifier confidence for
 the items in the pool. High scores indicate a high confidence that
 the true label is a &#8220;1&#8221; (and vice versa for label &#8220;0&#8221;).</p>
 </div></blockquote>
-<p><strong>goal_num_strata</strong> : int or &#8216;auto&#8217;, optional, default &#8216;auto&#8217;</p>
+<p><strong>goal_n_strata</strong> : int or &#8216;auto&#8217;, optional, default &#8216;auto&#8217;</p>
 <blockquote>
 <div><p>desired number of strata. If set to &#8216;auto&#8217;, the number is selected
 using the Freedman-Diaconis rule. Note that for the &#8216;cum_sqrt_F&#8217; method
@@ -80,7 +80,7 @@ less than the goal.</p>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>n_bins</strong> : int or &#8216;auto&#8217;, optional, default &#8216;auto&#8217;</p>
 <blockquote class="last">
 <div><p>specify the number of bins to use when estimating the distribution of
-the score function. This is used when <code class="docutils literal"><span class="pre">goal_num_strata</span> <span class="pre">=</span> <span class="pre">'auto'</span></code>
+the score function. This is used when <code class="docutils literal"><span class="pre">goal_n_strata</span> <span class="pre">=</span> <span class="pre">'auto'</span></code>
 and/or when <code class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">'cum_sqrt_F'</span></code>. If set to &#8216;auto&#8217;, the number is
 selected using the Freedman-Diaconis rule.</p>
 </div></blockquote>

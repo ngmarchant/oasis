@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>oasis.PassiveSampler &#8212; OASIS 6abf561 documentation</title>
+    <title>oasis.PassiveSampler &#8212; OASIS f8ab73f documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '6abf561',
+        VERSION:     'f8ab73f',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -48,7 +48,7 @@
 <h1><code class="xref py py-mod docutils literal"><span class="pre">oasis</span></code>.PassiveSampler<a class="headerlink" href="#oasis-passivesampler" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="oasis.PassiveSampler">
-<em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">PassiveSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">PassiveSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Passive sampling for estimation of the weighted F-measure</p>
 <p>Estimates the quantity:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>TP / (alpha * (TP + FP) + (1 - alpha) * (TP + FN))
@@ -62,43 +62,46 @@ an oracle (which must be provided).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float</p>
 <blockquote>
-<div><p>weight for the F-measure. Valid weights are on the interval [0, 1].
+<div><p>Weight for the F-measure. Valid weights are on the interval [0, 1].
 <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">1</span></code> corresponds to precision, <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0</span></code> corresponds to
 recall, and <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0.5</span></code> corresponds to the balanced F-measure.</p>
 </div></blockquote>
-<p><strong>predictions</strong> : array-like, shape=(pool_size,)</p>
+<p><strong>predictions</strong> : array-like, shape=(n_items,n_class)</p>
 <blockquote>
-<div><p>ordered array of predicted labels for each item in the pool. Valid
-labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+<div><p>Predicted labels for the items in the pool. Rows represent items and
+columns represent different classifiers under evaluation (i.e. more
+than one classifier may be evaluated in parallel). Valid labels are 0
+or 1.</p>
 </div></blockquote>
 <p><strong>oracle</strong> : function</p>
 <blockquote>
-<div><p>a function which takes an item id as input and returns the item&#8217;s true
-label. Valid labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+<div><p>Function that returns ground truth labels for items in the pool. The
+function should take an item identifier as input (i.e. its
+corresponding row index) and return the ground truth label. Valid
+labels are 0 or 1.</p>
 </div></blockquote>
 <p><strong>max_iter</strong> : int, optional, default None</p>
 <blockquote>
-<div><p>space for storing the sampling history is limited to a maximum
-number of iterations. Once this limit is reached, sampling can no
-longer continue. If no value is given, defaults to the size of
-the pool.</p>
+<div><p>Maximum number of iterations to expect for pre-allocating arrays.
+Once this limit is reached, sampling can no longer continue. If no
+value is given, defaults to n_items.</p>
 </div></blockquote>
 <p><strong>replace</strong> : bool, optional, default True</p>
 <blockquote>
-<div><p>whether to sample with or without replacement.</p>
+<div><p>Whether to sample with or without replacement.</p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>indices</strong> : array-like, optional, default None</p>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>identifiers</strong> : array-like, optional, default None</p>
 <blockquote>
-<div><p>ordered array of unique identifiers for the items in the pool.
-Should match the order of the &#8220;predictions&#8221; parameter. If no value is
-given, defaults to [0, 1, ..., pool_size].</p>
+<div><p>Unique identifiers for the items in the pool. Must match the row order
+of the &#8220;predictions&#8221; parameter. If no value is given, defaults to
+[0, 1, ..., n_items].</p>
 </div></blockquote>
-<p><strong>debug</strong> : bool, optional, default False</p>
+<p><strong>debug</strong> : bool, optional, default True</p>
 <blockquote class="last">
-<div><p>whether to print out verbose debugging information.</p>
+<div><p>Whether to print out verbose debugging information.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -112,16 +115,16 @@ given, defaults to [0, 1, ..., pool_size].</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a href="#id1"><span class="problematic" id="id2">estimate_</span></a></td>
-<td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
+<td>(numpy.ndarray) F-measure estimates for each iteration.</td>
 </tr>
 <tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">queried_oracle_</span></a></td>
-<td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
+<td>(numpy.ndarray) Records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
 </tr>
 <tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">cached_labels_</span></a></td>
-<td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
+<td>(numpy.ndarray, shape=(n_items,)) Previously sampled ground truth labels for the items in the pool. Items which have not had their labels queried are recorded as NaNs. The order of the items matches the row order for the &#8220;predictions&#8221; parameter.</td>
 </tr>
 <tr class="row-even"><td><a href="#id7"><span class="problematic" id="id8">t_</span></a></td>
-<td>(int) iteration index.</td>
+<td>(int) Iteration index.</td>
 </tr>
 </tbody>
 </table>
@@ -135,17 +138,17 @@ given, defaults to [0, 1, ..., pool_size].</p>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
 <td>Resets the sampler to its initial state</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>(n_items)</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>(n_to_sample,&nbsp;**kwargs)</td>
 <td>Sample a sequence of items from the pool</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample_distinct</span></code>(n_items)</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample_distinct</span></code>(n_to_sample,&nbsp;**kwargs)</td>
 <td>Sample a sequence of items from the pool until a minimum number of</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="oasis.PassiveSampler.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -26,7 +26,7 @@ OASIS depends on the following Python packages:
 
 * numpy
 * scipy
-* sklearn
+* sklearn (to use the experimental stratification method based on features)
 * tables (to use :class:`Data` container)
 
 These dependencies should be automatically resolved during installation.

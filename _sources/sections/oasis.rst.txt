@@ -29,18 +29,29 @@ OASIS requires four main inputs:
 
 #. ``alpha``: the F-measure weight as defined above
 #. ``predictions``: predicted labels for the items in the pool (according to the
-   classifier)
+   classifier(s))
 #. ``scores``: classifier scores for the items in the pool (e.g. estimated
    positive class probability, distance from decision boundary)
 #. ``oracle``: a function which returns ground truth labels for items in the
    pool (i.e. an interface to a labeller)
 
-For convenience of implementation, OASIS assumes that the items in the pool are
-assigned indices in :math:`\{0, 1, ..., N-1\}` where :math:`N` is the size of
-the pool. The ``predictions`` and ``scores`` inputs are assumed to be arrays,
-ordered by item index. The ``oracle`` function is also defined in terms of the
-item indices. It should take an index as input and return the true label of the
-corresponding item (i.e. integer "0" or "1").
+Multiple classifiers
+--------------------
+OASIS supports evaluating multiple classifiers on the same test set
+*in parallel*. It will optimise the sampling strategy to ensure that the
+performance estimates for all of the classifiers have minimal variance.
+To use this functionality, simply pass two-dimensional arrays for the
+``predictions`` and ``scores`` inputs. The rows of these arrays should
+correspond to the items and the columns should correspond to the different
+classifiers.
+
+Item identifiers
+----------------
+OASIS permits the use of custom unique identifiers for the items in the pool.
+Simply pass an array to the ``identifiers`` argument. If custom identifiers are
+provided, they will be used when making queries to the oracle function.
+Otherwise OASIS will refer to the items in the pool according to their index
+in the input ``predictions``/``scores`` arrays.
 
 Other parameters
 ================
@@ -99,8 +110,9 @@ estimate of the F-measure to see whether it is converging. The history of
 estimates (for each iteration) is stored in the ``estimate_`` attribute.
 
 .. note::
-    There exists an alternative method to ``sample`` called ``sample_distinct``.
+    There exists an alternative method to ``sample`` called
+    ``sample_distinct``, which is useful when sampling with replacement.
     This method continues to sample from the pool until a given number of
-    **distinct** items (i.e. previously unsampled items) have been sampled.
+    **distinct** items (i.e. previously unlabelled items) have been sampled.
     This differs from ``sample``, which doesn't distinguish between previously
-    sampled/unsampled items.
+    labelled/unlabelled items.

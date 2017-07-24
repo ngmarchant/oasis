@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>oasis.OASISSampler &#8212; OASIS 6abf561 documentation</title>
+    <title>oasis.OASISSampler &#8212; OASIS f8ab73f documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '6abf561',
+        VERSION:     'f8ab73f',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -28,7 +28,6 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="oasis.ImportanceSampler" href="oasis.ImportanceSampler.html" />
-    <link rel="prev" title="oasis.base.BaseSampler" href="oasis.base.BaseSampler.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -48,8 +47,9 @@
 <h1><code class="xref py py-mod docutils literal"><span class="pre">oasis</span></code>.OASISSampler<a class="headerlink" href="#oasis-oasissampler" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="oasis.OASISSampler">
-<em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">OASISSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>proba=False</em>, <em>epsilon=0.001</em>, <em>prior_strength=None</em>, <em>decaying_prior=True</em>, <em>strata=None</em>, <em>record_inst_hist=False</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.OASISSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adaptive importance sampling for estimation of the weighted F-measure</p>
+<em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">OASISSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>proba=False</em>, <em>epsilon=0.001</em>, <em>prior_strength=None</em>, <em>decaying_prior=True</em>, <em>strata=None</em>, <em>record_inst_hist=False</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.OASISSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimal Asymptotic Sequential Importance Sampling (OASIS) for estimation
+of the weighted F-measure.</p>
 <p>Estimates the quantity:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>TP / (alpha * (TP + FP) + (1 - alpha) * (TP + FN))
 </pre></div>
@@ -63,34 +63,44 @@ distribution that minimises asymptotic variance. See reference
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float</p>
 <blockquote>
-<div><p>weight for the F-measure. Valid weights are on the interval [0, 1].
+<div><p>Weight for the F-measure. Valid weights are on the interval [0, 1].
 <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">1</span></code> corresponds to precision, <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0</span></code> corresponds to
 recall, and <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0.5</span></code> corresponds to the balanced F-measure.</p>
 </div></blockquote>
-<p><strong>predictions</strong> : array-like, shape=(pool_size,)</p>
+<p><strong>predictions</strong> : array-like, shape=(n_items,n_class)</p>
 <blockquote>
-<div><p>ordered array of predicted labels for each item in the pool. Valid
-labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+<div><p>Predicted labels for the items in the pool. Rows represent items and
+columns represent different classifiers under evaluation (i.e. more
+than one classifier may be evaluated in parallel). Valid labels are 0
+or 1.</p>
 </div></blockquote>
-<p><strong>scores</strong> : array-like, shape=(pool_size,)</p>
+<p><strong>scores</strong> : array-like, shape=(n_items,n_class)</p>
 <blockquote>
-<div><p>ordered array of scores which quantify the classifier confidence for
-the items in the pool. High scores indicate a high confidence that
-the true label is a &#8220;1&#8221; (and vice versa for label &#8220;0&#8221;).</p>
+<div><p>Scores which quantify the confidence in the classifiers&#8217; predictions.
+Rows represent items and columns represent different classifiers under
+evaluation. High scores indicate a high confidence that the true label
+is 1 (and vice versa for label 0). It is recommended that the scores
+be scaled to the interval [0,1]. If the scores lie outside [0,1] they
+will be automatically re-scaled by applying the logisitic function.</p>
 </div></blockquote>
 <p><strong>oracle</strong> : function</p>
 <blockquote>
-<div><p>a function which takes an item id as input and returns the item&#8217;s true
-label. Valid labels are &#8220;0&#8221; or &#8220;1&#8221;.</p>
+<div><p>Function that returns ground truth labels for items in the pool. The
+function should take an item identifier as input (i.e. its
+corresponding row index) and return the ground truth label. Valid
+labels are 0 or 1.</p>
 </div></blockquote>
-<p><strong>proba</strong> : bool, optional, default False</p>
+<p><strong>proba</strong> : array-like, dtype=bool, shape=(n_class,), optional, default None</p>
 <blockquote>
-<div><p>indicates whether the scores are probabilistic, i.e. on the interval
-[0, 1].</p>
+<div><p>Indicates whether the scores are probabilistic, i.e. on the interval
+[0, 1] for each classifier under evaluation. If proba is False for
+a classifier, then the corresponding scores will be re-scaled by
+applying the logistic function. If None, proba will default to
+False for all classifiers.</p>
 </div></blockquote>
 <p><strong>epsilon</strong> : float, optional, default 1e-3</p>
 <blockquote>
-<div><p>epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
+<div><p>Epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
 &#8220;asymptotically optimal&#8221; distribution is sampled from with probability
 <cite>1 - epsilon</cite> and the passive distribution is sampled from with
 probability <cite>epsilon</cite>. The sampling is close to &#8220;optimal&#8221; for small
@@ -98,19 +108,18 @@ epsilon.</p>
 </div></blockquote>
 <p><strong>prior_strength</strong> : float, optional, default None</p>
 <blockquote>
-<div><p>parameter which quantifies the strength of the prior. May be
-interpreted as the number of pseudo-observations.</p>
+<div><p>Quantifies the strength of the prior. May be interpreted as the number
+of pseudo-observations.</p>
 </div></blockquote>
 <p><strong>max_iter</strong> : int, optional, default None</p>
 <blockquote>
-<div><p>space for storing the sampling history is limited to a maximum
-number of iterations. Once this limit is reached, sampling can no
-longer continue. If no value is given, defaults to the size of
-the pool.</p>
+<div><p>Maximum number of iterations to expect for pre-allocating arrays.
+Once this limit is reached, sampling can no longer continue. If no
+value is given, defaults to n_items.</p>
 </div></blockquote>
 <p><strong>strata</strong> : Strata instance, optional, default None</p>
 <blockquote>
-<div><p>describes how to stratify the pool. If not given, the stratification
+<div><p>Describes how to stratify the pool. If not given, the stratification
 will be done automatically based on the scores given. Additional
 keyword arguments may be passed to control this automatic
 stratification (see below).</p>
@@ -120,29 +129,29 @@ stratification (see below).</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>decaying_prior</strong> : bool, optional, default True</p>
 <blockquote>
-<div><p>whether to make the prior strength decay as 1/n_k, where n_k is the
+<div><p>Whether to make the prior strength decay as 1/n_k, where n_k is the
 number of items sampled from stratum k at the current iteration. This
 is a greedy strategy which may yield faster convergence of the estimate.</p>
 </div></blockquote>
 <p><strong>record_inst_hist</strong> : bool, optional, default False</p>
 <blockquote>
-<div><p>whether to store the instrumental distribution used at each iteration.
+<div><p>Whether to store the instrumental distribution used at each iteration.
 This requires extra memory, but can be useful for assessing
 convergence.</p>
 </div></blockquote>
-<p><strong>indices</strong> : array-like, optional, default None</p>
+<p><strong>identifiers</strong> : array-like, optional, default None</p>
 <blockquote>
-<div><p>ordered array of unique identifiers for the items in the pool.
-Should match the order of the &#8220;predictions&#8221; parameter. If no value is
-given, defaults to [0, 1, ..., pool_size].</p>
+<div><p>Unique identifiers for the items in the pool. Must match the row order
+of the &#8220;predictions&#8221; parameter. If no value is given, defaults to
+[0, 1, ..., n_items].</p>
 </div></blockquote>
 <p><strong>debug</strong> : bool, optional, default False</p>
 <blockquote>
-<div><p>whether to print out verbose debugging information.</p>
+<div><p>Whether to print out verbose debugging information.</p>
 </div></blockquote>
 <p><strong>**kwargs :</strong></p>
 <blockquote class="last">
-<div><p>optional keyword arguments. Includes &#8216;stratification_method&#8217;,
+<div><p>Optional keyword arguments. Includes &#8216;stratification_method&#8217;,
 &#8216;stratification_n_strata&#8217;, and &#8216;stratification_n_bins&#8217;.</p>
 </div></blockquote>
 </td>
@@ -166,19 +175,19 @@ Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a href="#id3"><span class="problematic" id="id4">estimate_</span></a></td>
-<td>(numpy.ndarray) array of F-measure estimates at each iteration. Iterations that yield an undefined estimate (e.g. 0/0) are recorded as NaN values.</td>
+<td>(numpy.ndarray) F-measure estimates for each iteration.</td>
 </tr>
 <tr class="row-even"><td><a href="#id5"><span class="problematic" id="id6">queried_oracle_</span></a></td>
-<td>(numpy.ndarray) array of bools which records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
+<td>(numpy.ndarray) Records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
 </tr>
 <tr class="row-odd"><td><a href="#id7"><span class="problematic" id="id8">cached_labels_</span></a></td>
-<td>(numpy.ndarray, shape=(pool_size,)) ordered array of true labels for the items in the pool. The order matches that used for the &#8220;predictions&#8221; parameter. Items which have not had their labels queried are recorded as NaNs.</td>
+<td>(numpy.ndarray, shape=(n_items,)) Previously sampled ground truth labels for the items in the pool. Items which have not had their labels queried are recorded as NaNs. The order of the items matches the row order for the &#8220;predictions&#8221; parameter.</td>
 </tr>
 <tr class="row-even"><td><a href="#id9"><span class="problematic" id="id10">t_</span></a></td>
-<td>(int) iteration index.</td>
+<td>(int) Iteration index.</td>
 </tr>
 <tr class="row-odd"><td><a href="#id11"><span class="problematic" id="id12">inst_pmf_</span></a></td>
-<td>(numpy.ndarray, shape=(num_strata,) or (num_strata, max_iter)) epsilon-greedy instrumental pmf used for sampling. If <code class="docutils literal"><span class="pre">record_inst_hist</span> <span class="pre">==</span> <span class="pre">False</span></code> only the most recent pmf is returned, else returns the entire history of pmfs in a 2D array.</td>
+<td>(numpy.ndarray, shape=(n_strata,) or (n_strata, max_iter)) Epsilon-greedy instrumental pmf used for sampling. If <code class="docutils literal"><span class="pre">record_inst_hist</span> <span class="pre">==</span> <span class="pre">False</span></code> only the most recent pmf is returned, otherwise returns the entire history of pmfs in a 2D array.</td>
 </tr>
 </tbody>
 </table>
@@ -192,17 +201,17 @@ Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
 <td>Resets the sampler to its initial state</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>(n_items)</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>(n_to_sample,&nbsp;**kwargs)</td>
 <td>Sample a sequence of items from the pool</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample_distinct</span></code>(n_items)</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample_distinct</span></code>(n_to_sample,&nbsp;**kwargs)</td>
 <td>Sample a sequence of items from the pool until a minimum number of</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="oasis.OASISSampler.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>proba=False</em>, <em>epsilon=0.001</em>, <em>prior_strength=None</em>, <em>decaying_prior=True</em>, <em>strata=None</em>, <em>record_inst_hist=False</em>, <em>max_iter=None</em>, <em>indices=None</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.OASISSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>scores</em>, <em>oracle</em>, <em>proba=False</em>, <em>epsilon=0.001</em>, <em>prior_strength=None</em>, <em>decaying_prior=True</em>, <em>strata=None</em>, <em>record_inst_hist=False</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.OASISSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -249,7 +258,6 @@ Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../sections/api-ref.html">API Reference</a><ul>
-      <li>Previous: <a href="oasis.base.BaseSampler.html" title="previous chapter"><code class="docutils literal"><span class="pre">oasis.base</span></code>.BaseSampler</a></li>
       <li>Next: <a href="oasis.ImportanceSampler.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis</span></code>.ImportanceSampler</a></li>
   </ul></li>
   </ul></li>

@@ -25,9 +25,9 @@ Non-adaptive importance sampler
 ===============================
 This method is based on importance sampling using a similar "optimal"
 instrumental distribution to the one used in OASIS (see [Sawade09]_). The
-difference is that this method approximates the "optimal" instrumental
-distribution based solely on the classifier scores, which may be misleading. It
-cannot adapt based on the incoming ground truth labels.
+key difference is that this method approximates the "optimal" instrumental
+distribution based solely on the classifier scores, which may be inaccurate.
+It cannot adapt based on the incoming ground truth labels.
 
 For further information, see the :class:`oasis.ImportanceSampler` class.
 
