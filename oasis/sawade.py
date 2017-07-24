@@ -3,9 +3,9 @@ import warnings
 from scipy.special import expit
 import copy
 
-from .base import (BaseSampler, verify_scores, verify_consistency)
+from .base import (PassiveSampler, verify_scores, verify_consistency)
 
-class ImportanceSampler(BaseSampler):
+class ImportanceSampler(PassiveSampler):
     """Importance sampling for estimation of the weighted F-measure
 
     Estimates the quantity::

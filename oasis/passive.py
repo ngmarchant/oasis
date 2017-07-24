@@ -1,9 +1,9 @@
 import numpy as np
 import warnings
 
-from .base import (BaseSampler, is_pos_integer)
+from .base import (PassiveSampler, is_pos_integer)
 
-class PassiveSampler(BaseSampler):
+class PassiveSamplerPassiveSampler:
     """Passive sampling for estimation of the weighted F-measure
 
     Estimates the quantity::

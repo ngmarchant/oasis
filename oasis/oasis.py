@@ -3,7 +3,7 @@ from scipy.special import expit
 import copy
 import warnings
 
-from .base import (BaseSampler, verify_scores, verify_consistency)
+from .base import (PassiveSampler, verify_scores, verify_consistency)
 from .stratification import (Strata, stratify_by_features, stratify_by_scores,
                              auto_stratify)
 
@@ -139,7 +139,7 @@ class BetaBernoulliModel:
         if self.store_variance:
             self._calc_var_theta()
 
-class OASISSampler(BaseSampler):
+class OASISSampler(PassiveSampler):
     """Optimal Asymptotic Sequential Importance Sampling (OASIS) for estimation
     of the weighted F-measure.
 
