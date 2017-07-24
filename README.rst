@@ -1,6 +1,14 @@
 =====
 OASIS
 =====
+
+.. image:: https://travis-ci.org/ngmarchant/oasis.svg?branch=master
+    :target: https://travis-ci.org/ngmarchant/oasis
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: https://opensource.org/licenses/MIT
+.. image:: https://badge.fury.io/py/oasis.svg
+    :target: https://pypi.python.org/pypi/betterbib
+
 OASIS is a tool for evaluating binary classifiers when ground truth class
 labels are not immediately available, but can be obtained at some cost (e.g.
 by asking humans). The tool takes an unlabelled test set as input and
