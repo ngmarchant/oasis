@@ -1,6 +1,11 @@
 =====================================================
 OASIS: a tool for efficient evaluation of classifiers
 =====================================================
+.. image:: https://travis-ci.org/ngmarchant/oasis.svg?branch=master
+    :target: https://travis-ci.org/ngmarchant/oasis
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: https://opensource.org/licenses/MIT
+
 
 Overview
 ========
@@ -25,7 +30,7 @@ OASIS is particularly useful when:
 * F1-score, precision, or recall is a sufficient measure for the classifier's
   performance
 * the classification problem demonstrates a high degree of class imbalance
-  (examples include entity resolution, information retrieval, text 
+  (examples include entity resolution, information retrieval, text
   classification and many problems in the medical domain)
 
 Note that the final point to do with class imbalance does not need to be
