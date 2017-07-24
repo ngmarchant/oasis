@@ -6,7 +6,7 @@ Overview
 ========
 OASIS is a tool for evaluating binary classifiers when ground truth class
 labels are not immediately available, but can be obtained at some cost (e.g.
-by asking humans). The tool takes an unlabelled test set as input and
+by asking human annotators). The tool takes an unlabelled test set as input and
 intelligently selects items to label so as to provide a *precise* estimate of
 the classifier's performance, whilst *minimising* the amount of labelling
 required. The underlying strategy for selecting the items to label is based on
@@ -25,8 +25,8 @@ OASIS is particularly useful when:
 * F1-score, precision, or recall is a sufficient measure for the classifier's
   performance
 * the classification problem demonstrates a high degree of class imbalance
-  (examples include entity resolution, text classification and many problems in
-  the medical domain)
+  (examples include entity resolution, information retrieval, text 
+  classification and many problems in the medical domain)
 
 Note that the final point to do with class imbalance does not need to be
 satisifed in order for OASIS to provide accurate estimates of classifier

@@ -12,7 +12,7 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
 
     num_expts        number of expts to run
 
-    num_lables       number of labels to query from the oracle in each expt
+    num_labels       number of labels to query from the oracle in each expt
 
 
     sampling_obj must have:
@@ -23,7 +23,7 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
 
     FILTERS = tables.Filters(complib='zlib', complevel=5)
 
-    max_iter = len(sampling_obj.F)
+    max_iter = len(sampling_obj.estimate_)
     if max_iter < num_labels:
         raise ValueError("Cannot query {} labels. {} supports only {} \
             iterations".format(num_labels, sampling_obj.__name__, max_iter))
@@ -48,13 +48,13 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
             logging.info("Completed {} of {} experiments".format(idx, num_expts))
         ti = time.process_time()
         sampling_obj.reset()
-        sampling_obj.sample_until(num_labels)
+        sampling_obj.sample_distinct(num_labels)
         tf = time.process_time()
         if hasattr(sampling_obj, 'queried_oracle'):
-            array_F.append([sampling_obj.F[sampling_obj.queried_oracle]])
+            array_F.append([sampling_obj.estimate_[sampling_obj.queried_oracle_]])
         else:
-            array_F.append([sampling_obj.F_wp[0:num_labels]])
-        array_s[idx] = sampling_obj.t
+            array_F.append([sampling_obj.estimate_[0:num_labels]])
+        array_s[idx] = sampling_obj.t_
         array_t[idx] = tf - ti
     f.close()
 

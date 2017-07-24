@@ -1,8 +1,9 @@
 import numpy as np
 import warnings
 from scipy.special import expit
+import copy
 
-from .base import (BaseSampler, verify_proba)
+from .base import (BaseSampler, verify_scores, verify_consistency)
 
 class ImportanceSampler(BaseSampler):
     """Importance sampling for estimation of the weighted F-measure
@@ -19,73 +20,78 @@ class ImportanceSampler(BaseSampler):
     Parameters
     ----------
     alpha : float
-        weight for the F-measure. Valid weights are on the interval [0, 1].
+        Weight for the F-measure. Valid weights are on the interval [0, 1].
         ``alpha == 1`` corresponds to precision, ``alpha == 0`` corresponds to
         recall, and ``alpha == 0.5`` corresponds to the balanced F-measure.
 
-    predictions : array-like, shape=(pool_size,)
-        ordered array of predicted labels for each item in the pool. Valid
-        labels are "0" or "1".
+    predictions : array-like, shape=(n_items,n_class)
+        Predicted labels for the items in the pool. Rows represent items and
+        columns represent different classifiers under evaluation (i.e. more
+        than one classifier may be evaluated in parallel). Valid labels are 0
+        or 1.
 
-    scores : array-like, shape=(pool_size,)
-        ordered array of scores which quantify the classifier confidence for
-        the items in the pool. High scores indicate a high confidence that
-        the true label is a "1" (and vice versa for label "0").
+    scores : array-like, shape=(n_items,)
+        Scores which quantify the confidence in the classifiers' predictions.
+        Rows represent items and columns represent different classifiers under
+        evaluation. High scores indicate a high confidence that the true label
+        is 1 (and vice versa for label 0). It is recommended that the scores
+        be scaled to the interval [0,1]. If the scores lie outside [0,1] they
+        will be automatically re-scaled by applying the logisitic function.
 
     oracle : function
-        a function which takes an item id as input and returns the item's true
-        label. Valid labels are "0" or "1".
+        Function that returns ground truth labels for items in the pool. The
+        function should take an item identifier as input (i.e. its
+        corresponding row index) and return the ground truth label. Valid
+        labels are 0 or 1.
 
-    proba : bool, optional, default False
-        indicates whether the scores are probabilistic, i.e. on the interval
-        [0, 1].
+    proba : array-like, dtype=bool, shape=(n_class,), optional, default None
+        Indicates whether the scores are probabilistic, i.e. on the interval
+        [0, 1] for each classifier under evaluation. If proba is False for
+        a classifier, then the corresponding scores will be re-scaled by
+        applying the logistic function. If None, proba will default to
+        False for all classifiers.
 
     epsilon : float, optional, default 1e-3
-        epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
+        Epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
         "asymptotically optimal" distribution is sampled from with probability
         `1 - epsilon` and the passive distribution is sampled from with
         probability `epsilon`. The sampling is close to "optimal" for small
         epsilon.
 
     max_iter : int, optional, default None
-        space for storing the sampling history is limited to a maximum
-        number of iterations. Once this limit is reached, sampling can no
-        longer continue. If no value is given, defaults to the size of
-        the pool.
-
-    replace : bool, optional, default True
-        whether to sample with or without replacement.
+        Maximum number of iterations to expect for pre-allocating arrays.
+        Once this limit is reached, sampling can no longer continue. If no
+        value is given, defaults to n_items.
 
     Other Parameters
     ----------------
-    indices : array-like, optional, default None
-        ordered array of unique identifiers for the items in the pool.
-        Should match the order of the "predictions" parameter. If no value is
-        given, defaults to [0, 1, ..., pool_size].
+    identifiers : array-like, optional, default None
+        Unique identifiers for the items in the pool. Must match the row order
+        of the "predictions" parameter. If no value is given, defaults to
+        [0, 1, ..., n_items].
 
     debug : bool, optional, default False
-        whether to print out verbose debugging information.
+        Whether to print out verbose debugging information.
 
     Attributes
     ----------
     estimate_ : numpy.ndarray
-        array of F-measure estimates at each iteration. Iterations that yield
-        an undefined estimate (e.g. 0/0) are recorded as NaN values.
+        F-measure estimates for each iteration.
 
     queried_oracle_ : numpy.ndarray
-        array of bools which records whether the oracle was queried at each
-        iteration (True) or whether a cached label was used (False).
+        Records whether the oracle was queried at each iteration (True) or
+        whether a cached label was used (False).
 
-    cached_labels_ : numpy.ndarray, shape=(pool_size,)
-        ordered array of true labels for the items in the pool. The order
-        matches that used for the "predictions" parameter. Items which have not
-        had their labels queried are recorded as NaNs.
+    cached_labels_ : numpy.ndarray, shape=(n_items,)
+        Previously sampled ground truth labels for the items in the pool. Items
+        which have not had their labels queried are recorded as NaNs. The order
+        of the items matches the row order for the "predictions" parameter.
 
     t_ : int
-        iteration index.
+        Iteration index.
 
-    inst_pmf_ : numpy.ndarray, shape=(pool_size,)
-        epsilon-greedy instrumental pmf used for sampling.
+    inst_pmf_ : numpy.ndarray, shape=(n_items,)
+        Epsilon-greedy instrumental pmf used for sampling.
 
     References
     ----------
@@ -94,35 +100,56 @@ class ImportanceSampler(BaseSampler):
        2010, pp. 2083–2091
     """
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
-                 epsilon=1e-3, max_iter=None, indices = None, debug=False):
+                 epsilon=1e-3, max_iter=None, identifiers=None, debug=False):
         super(ImportanceSampler, self).__init__(alpha, predictions, oracle,
-                                          max_iter, indices, debug)
-        self.scores = scores
-        self.proba = verify_proba(scores, proba)
+                                          max_iter, identifiers, True, debug)
+        self.scores = verify_scores(scores)
+        self.proba = verify_consistency(self.predictions, self.scores, proba)
         self.epsilon = epsilon
 
-        # Map scores to [0,1] interval (if not already probabilities)
-        self._probs = self.scores if proba else expit(self.scores)
-        self._F_guess = self._calc_F_guess(self.alpha, self.predictions,
-                                           self._probs)
+        # Need to transform scores to the [0,1] interval (to use as proxy for
+        # probabilities)
+        if np.any(~self.proba):
+            # Need to convert some of the scores into probabilities
+            self._probs = copy.deepcopy(self.scores)
+            for m in range(self._n_class):
+                if ~self.proba[m]:
+                    #TODO: incorporate threshold (currently assuming zero)
+                    self._probs[:,m] = expit(self.scores[:,m])
+        else:
+            self._probs = self.scores
 
-        self.inst_pmf_ = np.empty(self._pool_size, dtype=float)
+        # If there are multiple classifiers, we need the probabilities
+        # averaged over the classifiers
+        if self._multiple_class:
+            self._probs_avg_class = np.mean(self._probs, axis=1, keepdims=True)
+            self._F_guess = self._calc_F_guess(self.alpha,
+                                               self.predictions,
+                                               self._probs_avg_class.ravel())
+        else:
+            self._F_guess = self._calc_F_guess(self.alpha,
+                                               self.predictions,
+                                               self._probs.ravel())
+
+        self.inst_pmf_ = np.empty(self._n_items, dtype=float)
         self._initialise_pmf()
 
-    def _sample_item(self):
+    def _sample_item(self, **kwargs):
         """Sample an item from the pool according to the instrumental
         distribution
         """
-        loc = np.random.choice(self._pool_size, p = self.inst_pmf_)
-        weight = (1/self._pool_size)/self.inst_pmf_[loc]
+        loc = np.random.choice(self._n_items, p = self.inst_pmf_)
+        weight = (1/self._n_items)/self.inst_pmf_[loc]
         return loc, weight, {}
 
     def _calc_F_guess(self, alpha, predictions, probabilities):
         """Calculate an estimate of the F-measure based on the scores"""
-        num = np.sum(self._probs * self.predictions)
-        den = np.sum(self._probs * (1 - self.alpha) + \
-                        self.alpha * self.predictions)
-        F_guess = 0.5 if den==0 else num/den
+        num = np.sum(predictions.T * probabilities, axis=1)
+        den = np.sum((1 - alpha) * probabilities + \
+                     alpha * predictions.T, axis=1)
+        F_guess = num/den
+        # Ensure guess is not undefined
+        F_guess[den==0] = 0.5
         return F_guess
 
     def _initialise_pmf(self):
@@ -130,25 +157,19 @@ class ImportanceSampler(BaseSampler):
         # Easy vars
         epsilon = self.epsilon
         alpha = self.alpha
-        predictions = self.predictions
-        p1 = self._probs
+        preds = self.predictions
+        p1 = self._probs_avg_class if self._multiple_class else self._probs
         p0 = 1 - p1
-        pool_size = self._pool_size
+        n_items = self._n_items
         F = self._F_guess
 
-        # Predict positive pmf
-        pp_pmf = np.sqrt(alpha**2 * F**2 * p0 + (1 - F)**2 * p1)
-
-        # Predict negative pmf
-        pn_pmf = (1 - alpha) * F * np.sqrt(p1)
-
-        # Calculate "optimal" pmf
-        self.inst_pmf_ = ( (predictions == 1) * pp_pmf
-                          + (predictions == 0) * pn_pmf )
-
-        # Normalise
-        self.inst_pmf_ = self.inst_pmf_/np.sum(self.inst_pmf_)
-
-        # Epsilon-greedy version
-        self.inst_pmf_ = ( epsilon * np.repeat(1/pool_size, pool_size)
-                          + (1 - epsilon) * self.inst_pmf_ )
+        # Calculate optimal instrumental pmf
+        sqrt_arg = np.sum(preds * (alpha**2 * F**2 * p0 + (1 - F)**2 * p1) + \
+                          (1 - preds) * (1 - alpha)**2 * F**2 * p1, \
+                          axis=1) #: sum is over classifiers
+        self.inst_pmf_ = np.sqrt(sqrt_arg)
+        # Normalize
+        self.inst_pmf_ /= np.sum(self.inst_pmf_)
+        # Epsilon-greedy: (1 - epsilon) q + epsilon * p
+        self.inst_pmf_ *= (1 - epsilon)
+        self.inst_pmf_ += epsilon * 1/n_items

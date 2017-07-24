@@ -1,16 +1,6 @@
 import numpy as np
 import warnings
 
-def verify_proba(scores, proba):
-    """
-    Corrects the value of `proba` (if the scores don't match).
-    """
-    if (np.any(np.logical_or(scores < 0, scores > 1)) and proba):
-        warnings.warn("Scores fall outside the [0,1] interval. Setting " +
-                      "proba=False.")
-        return False
-    return proba
-
 def is_pos_integer(number):
     """Checks whether argument is a positive integer"""
     if (type(number) is int) and (number > 0):
@@ -18,27 +8,84 @@ def is_pos_integer(number):
     else:
         return False
 
+def verify_predictions(predictions):
+    # Check that it contains only zeros and ones
+    predictions = np.array(predictions, copy=False)
+    if not np.array_equal(predictions, predictions.astype(bool)):
+        raise ValueError("predictions contains invalid values. " +
+                         "The only permitted values are 0 or 1.")
+    if predictions.ndim == 1:
+        predictions = predictions[:,np.newaxis]
+    return predictions
+
+def verify_scores(scores):
+    scores = np.array(scores, copy=False)
+    if np.any(~np.isfinite(scores)):
+        raise ValueError("scores contains invalid values. " +
+                         "Please check that all values are finite.")
+    if scores.ndim == 1:
+        scores = scores[:,np.newaxis]
+    return scores
+
+def verify_consistency(predictions, scores, proba):
+    """Verifies that all arrays have consistent dimensions. Also verifies
+    that the scores are consistent with proba. Returns proba.
+    """
+    if predictions.shape != scores.shape:
+        raise ValueError("predictions and scores arrays have inconsistent " +
+                         "dimensions.")
+
+    n_class = scores.shape[1] if scores.ndim > 1 else 1
+
+    # If proba not given, default to False for all classifiers
+    if proba is None:
+        return np.repeat(False, n_class)
+
+    # Ensure proba is a numpy array (important for case of one classifier)
+    proba = np.array(proba, dtype=bool, ndmin=1)
+
+    if predictions.shape[1] != len(proba):
+        raise ValueError("length of proba and number of columns in " +
+                         "should match.")
+
+    for m in range(n_class):
+        if (np.any(np.logical_or(scores[:,m] < 0, scores[:,m] > 1)) and proba[m]):
+            warnings.warn("Scores fall outside the [0,1] interval for " +
+                          "classifier {}. Setting proba[m]=False.".format(m))
+            proba[m] = False
+    return proba
+
 class BaseSampler:
     """Base class for all samplers"""
-    def __init__(self, alpha, predictions, oracle, max_iter=None, indices=None,
-                 debug=False):
+    def __init__(self, alpha, predictions, oracle, max_iter=None, identifiers=None,
+                 replace=True, debug=False):
         self.alpha = alpha
         self.oracle = oracle
-        self.indices = indices
-        self.predictions = predictions
-        self._pool_size = len(predictions)
-        self._max_iter = self._pool_size if (max_iter is None) else max_iter
+        self.identifiers = identifiers
+        self.predictions = verify_predictions(predictions)
+        self._n_class = self.predictions.shape[1]
+        self._multiple_class = True if self._n_class > 1 else False
+        self._n_items = predictions.shape[0]
+        self._max_iter = self._n_items if (max_iter is None) else int(max_iter)
+        self.replace = replace
         self.debug=debug
-        self._requires_updating = False
+
+        # If sampling without replacement, make sure max_iter is not
+        # unnecessarily large
+        if (not self.replace) and (self._max_iter > self._n_items):
+            warnings.warn("Setting max_iter to the size of the pool since "
+                          "sampling without replacement.".format(self._n_items))
+            self._max_iter = self._n_items
 
         # Make item ids if not given
-        if self.indices is None:
-            self.indices = np.arange(self._pool_size)
+        if self.identifiers is None:
+            self.identifiers = np.arange(self._n_items)
 
-        # Terms that make up the F-measure
-        self._TP = 0
-        self._PP = 0
-        self._P = 0
+        # Type I/II error terms
+        self._TP = np.zeros(self._n_class)
+        self._FP = np.zeros(self._n_class)
+        self._FN = np.zeros(self._n_class)
+        self._TN = np.zeros(self._n_class)
 
         # Iteration index
         self.t_ = 0
@@ -46,10 +93,10 @@ class BaseSampler:
         # Array to record whether oracle was queried at each iteration
         self.queried_oracle_ = np.repeat(False, self._max_iter)
 
-        self.cached_labels_ = np.repeat(np.nan, self._pool_size)
+        self.cached_labels_ = np.repeat(np.nan, self._n_items)
 
         # Array to record history of F-measure estimates
-        self.estimate_ = np.repeat(np.nan, self._max_iter)
+        self.estimate_ = np.tile(np.nan, [self._max_iter, self._n_class])
 
     def reset(self):
         """Resets the sampler to its initial state
@@ -58,67 +105,69 @@ class BaseSampler:
         ----
         This will destroy the label cache and history of estimates.
         """
-        self._TP = 0
-        self._PP = 0
-        self._P = 0
+        self._TP = np.zeros(self._n_class)
+        self._FP = np.zeros(self._n_class)
+        self._FN = np.zeros(self._n_class)
+        self._TN = np.zeros(self._n_class)
         self.t_ = 0
         self.queried_oracle_ = np.repeat(False, self._max_iter)
-        self.cached_labels_ = np.repeat(np.nan, self._pool_size)
-        self.estimate_ = np.repeat(np.nan, self._max_iter)
+        self.cached_labels_ = np.repeat(np.nan, self._n_items)
+        self.estimate_ = np.tile(np.nan, [self._max_iter, self._n_class])
 
-    def _iterate(self):
+    def _iterate(self, **kwargs):
         """Procedure for a single iteration (sampling and updating)"""
         # Sample item
-        loc, weight, extra_info = self._sample_item()
+        loc, weight, extra_info = self._sample_item(**kwargs)
         # Query label
         ell = self._query_label(loc)
-        # Get prediction
-        ell_hat = self.predictions[loc]
+        # Get predictions
+        ell_hat = self.predictions[loc,:]
 
         if self.debug == True:
             print("Sampled label {} for item {}.".format(ell,loc))
 
-        # Update estimate
-        self._update_estimate(ell, ell_hat, weight)
-        if self._requires_updating:
-            self._update_sampler(ell, ell_hat, loc, weight, extra_info)
+        # Update
+        self._update_estimate_and_sampler(ell, ell_hat, weight, extra_info, **kwargs)
 
         self.t_ = self.t_ + 1
 
-    def sample(self, n_items):
+    def sample(self, n_to_sample, **kwargs):
         """Sample a sequence of items from the pool
 
         Parameters
         ----------
-        n_items : int
+        n_to_sample : int
             number of items to sample
         """
-        if not is_pos_integer(n_items):
-            raise ValueError("n_items must be a positive integer.")
+        if not is_pos_integer(n_to_sample):
+            raise ValueError("n_to_sample must be a positive integer.")
 
         n_remaining = self._max_iter - self.t_
 
         if n_remaining == 0:
-            raise Exception("No more space available to continue sampling. "
-                            "Consider re-initialising with a larger value "
-                            "of max_iter.")
+            if (not self.replace) and (self._n_items == self._max_iter):
+                raise Exception("All items have already been sampled")
+            else:
+                raise Exception("No more space available to continue sampling. "
+                                "Consider re-initialising with a larger value "
+                                "of max_iter.")
 
-        if n_items > n_remaining:
+        if n_to_sample > n_remaining:
             warnings.warn("Space only remains for {} more iteration(s). "
-                          "Setting n_items = {}.".format(n_remaining, \
+                          "Setting n_to_sample = {}.".format(n_remaining, \
                           n_remaining))
-            n_items = n_remaining
+            n_to_sample = n_remaining
 
-        for _ in range(n_items):
-            self._iterate()
+        for _ in range(n_to_sample):
+            self._iterate(**kwargs)
 
-    def sample_distinct(self, n_items):
+    def sample_distinct(self, n_to_sample, **kwargs):
         """Sample a sequence of items from the pool until a minimum number of
         distinct items are queried
 
         Parameters
         ----------
-        n_items : int
+        n_to_sample : int
             number of distinct items to sample. If sampling with replacement,
             this number is not necessarily the same as the number of
             iterations.
@@ -129,18 +178,18 @@ class BaseSampler:
         if n_notsampled == 0:
             raise Exception("All distinct items have already been sampled.")
 
-        if n_items > n_notsampled:
+        if n_to_sample > n_notsampled:
             warnings.warn("Only {} distinct item(s) have not yet been sampled."
-                          " Setting n_items = {}.".format(n_notsampled, \
+                          " Setting n_to_sample = {}.".format(n_notsampled, \
                           n_notsampled))
-            n_items = n_notsampled
+            n_to_sample = n_notsampled
 
         n_sampled = 0 # number of distinct items sampled this round
-        while n_sampled < n_items:
-            self.sample(1)
+        while n_sampled < n_to_sample:
+            self.sample(1,**kwargs)
             n_sampled += self.queried_oracle_[self.t_ - 1]*1
 
-    def _sample_item(self):
+    def _sample_item(self, **kwargs):
         """Sample a single item from the pool. Varies depending on sampler."""
         return
 
@@ -159,7 +208,7 @@ class BaseSampler:
 
         if np.isnan(ell):
             # Label has not been cached. Need to query oracle
-            oracle_arg = self.indices[loc]
+            oracle_arg = self.identifiers[loc]
             ell = self.oracle(oracle_arg)
             if ell not in [0, 1]:
                 raise Exception("Oracle provided an invalid label.")
@@ -169,29 +218,26 @@ class BaseSampler:
 
         return ell
 
-    def _F_measure(self, alpha, TP, PP, P):
+    def _F_measure(self, alpha, TP, FP, FN, return_num_den=False):
         """Calculate the weighted F-measure"""
-        num = TP
-        den = (alpha * PP + (1 - alpha) * P)
-        return np.nan if (den == 0) else (num/den)
+        num = np.float64(TP)
+        den = np.float64(alpha * (TP + FP) + (1 - alpha) * (TP + FN))
+        with np.errstate(divide='ignore', invalid='ignore'):
+            F_measure = num/den
+        #F_measure = num/den
 
-    def _update_estimate(self, ell, ell_hat, weight):
+        if return_num_den:
+            return F_measure, num, den
+        else:
+            return F_measure
+
+    def _update_estimate_and_sampler(self, ell, ell_hat, weight, extra_info,
+                                     **kwargs):
         """Update the estimate after querying the label for an item"""
-        if ell == 1 and ell_hat == 1:
-            # Point is true positive
-            self._TP = self._TP + weight
-            self._PP = self._PP + weight
-            self._P = self._P + weight
-        elif ell_hat == 1:
-            # Point is false positive
-            self._PP = self._PP + weight
-        elif ell == 1:
-            # Point is false negative
-            self._P = self._P + weight
+        self._TP += ell_hat * ell * weight
+        self._FP += ell_hat * (1 - ell) * weight
+        self._FN += (1 - ell_hat) * ell * weight
+        self._TN += (1 - ell_hat) * (1 - ell) * weight
 
         self.estimate_[self.t_] = \
-                self._F_measure(self.alpha, self._TP, self._PP, self._P)
-
-    def _update_sampler(self, ell, ell_hat, loc, weight, extra_info):
-        """Used for adaptive samplers"""
-        return
+                self._F_measure(self.alpha, self._TP, self._FP, self._FN)

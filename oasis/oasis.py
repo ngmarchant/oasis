@@ -3,7 +3,7 @@ from scipy.special import expit
 import copy
 import warnings
 
-from .base import (BaseSampler, verify_proba)
+from .base import (BaseSampler, verify_scores, verify_consistency)
 from .stratification import (Strata, stratify_by_features, stratify_by_scores,
                              auto_stratify)
 
@@ -12,10 +12,10 @@ class BetaBernoulliModel:
 
     Parameters
     ----------
-    alpha_0 : numpy.ndarray, shape=(num_strata,)
+    alpha_0 : numpy.ndarray, shape=(n_strata,)
         alpha prior hyperparameter
 
-    beta_0 : numpy.ndarray, shape=(num_strata,)
+    beta_0 : numpy.ndarray, shape=(n_strata,)
         beta prior hyperparameter
 
     store_variance : bool, optional, default False
@@ -30,16 +30,16 @@ class BetaBernoulliModel:
 
     Attributes
     ----------
-    alpha_ : numpy.ndarray, shape=(num_strata,)
+    alpha_ : numpy.ndarray, shape=(n_strata,)
         posterior value of alpha (excluding prior)
 
-    beta_ : numpy.ndarray, shape=(num_strata,)
+    beta_ : numpy.ndarray, shape=(n_strata,)
         posterior value of beta (excluding prior)
 
-    theta_ : numpy.ndarray, shape=(num_strata,)
+    theta_ : numpy.ndarray, shape=(n_strata,)
         posterior estimate of theta
 
-    var_theta_ : numpy.ndarray, shape=(num_strata,)
+    var_theta_ : numpy.ndarray, shape=(n_strata,)
         posterior estimate of var(theta)
     """
     def __init__(self, alpha_0, beta_0, store_variance=False,
@@ -65,8 +65,8 @@ class BetaBernoulliModel:
 
         # Estimates without incorporating prior (wp = weak prior)
         if self.store_wp:
-            self.theta_wp = np.empty(self._size, dtype=float)
-            self._wp_weight = 1e-16
+            self.theta_wp_ = np.empty(self._size, dtype=float)
+            self._wp_weight = 1e-20
 
         # Initialise estimates
         self._calc_theta()
@@ -91,7 +91,7 @@ class BetaBernoulliModel:
         if self.store_wp:
             alpha = self.alpha_ + self._wp_weight * self.alpha_0
             beta = self.beta_ + self._wp_weight * self.beta_0
-            self.theta_wp = alpha / (alpha + beta)
+            self.theta_wp_ = alpha / (alpha + beta)
 
     def _calc_var_theta(self):
         """Calculate an estimate of the var(theta)"""
@@ -118,8 +118,8 @@ class BetaBernoulliModel:
         k : int
             index of stratum where label was sampled
         """
-        self.alpha_[k] = self.alpha_[k] + ell
-        self.beta_[k] = self.beta_[k] + 1 - ell
+        self.alpha_[k] += ell
+        self.beta_[k] += 1 - ell
 
         self._calc_theta()
         if self.store_variance:
@@ -133,14 +133,15 @@ class BetaBernoulliModel:
         if self.store_variance:
             self.var_theta_ = np.empty(self._size, dtype=float)
         if self.store_wp:
-            self.theta_wp = np.empty(self._size, dtype=float)
+            self.theta_wp_ = np.empty(self._size, dtype=float)
 
         self._calc_theta()
         if self.store_variance:
             self._calc_var_theta()
 
 class OASISSampler(BaseSampler):
-    """Adaptive importance sampling for estimation of the weighted F-measure
+    """Optimal Asymptotic Sequential Importance Sampling (OASIS) for estimation
+    of the weighted F-measure.
 
     Estimates the quantity::
 
@@ -153,46 +154,55 @@ class OASISSampler(BaseSampler):
     Parameters
     ----------
     alpha : float
-        weight for the F-measure. Valid weights are on the interval [0, 1].
+        Weight for the F-measure. Valid weights are on the interval [0, 1].
         ``alpha == 1`` corresponds to precision, ``alpha == 0`` corresponds to
         recall, and ``alpha == 0.5`` corresponds to the balanced F-measure.
 
-    predictions : array-like, shape=(pool_size,)
-        ordered array of predicted labels for each item in the pool. Valid
-        labels are "0" or "1".
+    predictions : array-like, shape=(n_items,n_class)
+        Predicted labels for the items in the pool. Rows represent items and
+        columns represent different classifiers under evaluation (i.e. more
+        than one classifier may be evaluated in parallel). Valid labels are 0
+        or 1.
 
-    scores : array-like, shape=(pool_size,)
-        ordered array of scores which quantify the classifier confidence for
-        the items in the pool. High scores indicate a high confidence that
-        the true label is a "1" (and vice versa for label "0").
+    scores : array-like, shape=(n_items,n_class)
+        Scores which quantify the confidence in the classifiers' predictions.
+        Rows represent items and columns represent different classifiers under
+        evaluation. High scores indicate a high confidence that the true label
+        is 1 (and vice versa for label 0). It is recommended that the scores
+        be scaled to the interval [0,1]. If the scores lie outside [0,1] they
+        will be automatically re-scaled by applying the logisitic function.
 
     oracle : function
-        a function which takes an item id as input and returns the item's true
-        label. Valid labels are "0" or "1".
+        Function that returns ground truth labels for items in the pool. The
+        function should take an item identifier as input (i.e. its
+        corresponding row index) and return the ground truth label. Valid
+        labels are 0 or 1.
 
-    proba : bool, optional, default False
-        indicates whether the scores are probabilistic, i.e. on the interval
-        [0, 1].
+    proba : array-like, dtype=bool, shape=(n_class,), optional, default None
+        Indicates whether the scores are probabilistic, i.e. on the interval
+        [0, 1] for each classifier under evaluation. If proba is False for
+        a classifier, then the corresponding scores will be re-scaled by
+        applying the logistic function. If None, proba will default to
+        False for all classifiers.
 
     epsilon : float, optional, default 1e-3
-        epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
+        Epsilon-greedy parameter. Valid values are on the interval [0, 1]. The
         "asymptotically optimal" distribution is sampled from with probability
         `1 - epsilon` and the passive distribution is sampled from with
         probability `epsilon`. The sampling is close to "optimal" for small
         epsilon.
 
     prior_strength : float, optional, default None
-        parameter which quantifies the strength of the prior. May be
-        interpreted as the number of pseudo-observations.
+        Quantifies the strength of the prior. May be interpreted as the number
+        of pseudo-observations.
 
     max_iter : int, optional, default None
-        space for storing the sampling history is limited to a maximum
-        number of iterations. Once this limit is reached, sampling can no
-        longer continue. If no value is given, defaults to the size of
-        the pool.
+        Maximum number of iterations to expect for pre-allocating arrays.
+        Once this limit is reached, sampling can no longer continue. If no
+        value is given, defaults to n_items.
 
     strata : Strata instance, optional, default None
-        describes how to stratify the pool. If not given, the stratification
+        Describes how to stratify the pool. If not given, the stratification
         will be done automatically based on the scores given. Additional
         keyword arguments may be passed to control this automatic
         stratification (see below).
@@ -200,49 +210,48 @@ class OASISSampler(BaseSampler):
     Other Parameters
     ----------------
     decaying_prior : bool, optional, default True
-        whether to make the prior strength decay as 1/n_k, where n_k is the
+        Whether to make the prior strength decay as 1/n_k, where n_k is the
         number of items sampled from stratum k at the current iteration. This
         is a greedy strategy which may yield faster convergence of the estimate.
 
     record_inst_hist : bool, optional, default False
-        whether to store the instrumental distribution used at each iteration.
+        Whether to store the instrumental distribution used at each iteration.
         This requires extra memory, but can be useful for assessing
         convergence.
 
-    indices : array-like, optional, default None
-        ordered array of unique identifiers for the items in the pool.
-        Should match the order of the "predictions" parameter. If no value is
-        given, defaults to [0, 1, ..., pool_size].
+    identifiers : array-like, optional, default None
+        Unique identifiers for the items in the pool. Must match the row order
+        of the "predictions" parameter. If no value is given, defaults to
+        [0, 1, ..., n_items].
 
     debug : bool, optional, default False
-        whether to print out verbose debugging information.
+        Whether to print out verbose debugging information.
 
     **kwargs :
-        optional keyword arguments. Includes 'stratification_method',
+        Optional keyword arguments. Includes 'stratification_method',
         'stratification_n_strata', and 'stratification_n_bins'.
 
     Attributes
     ----------
     estimate_ : numpy.ndarray
-        array of F-measure estimates at each iteration. Iterations that yield
-        an undefined estimate (e.g. 0/0) are recorded as NaN values.
+        F-measure estimates for each iteration.
 
     queried_oracle_ : numpy.ndarray
-        array of bools which records whether the oracle was queried at each
-        iteration (True) or whether a cached label was used (False).
+        Records whether the oracle was queried at each iteration (True) or
+        whether a cached label was used (False).
 
-    cached_labels_ : numpy.ndarray, shape=(pool_size,)
-        ordered array of true labels for the items in the pool. The order
-        matches that used for the "predictions" parameter. Items which have not
-        had their labels queried are recorded as NaNs.
+    cached_labels_ : numpy.ndarray, shape=(n_items,)
+        Previously sampled ground truth labels for the items in the pool. Items
+        which have not had their labels queried are recorded as NaNs. The order
+        of the items matches the row order for the "predictions" parameter.
 
     t_ : int
-        iteration index.
+        Iteration index.
 
-    inst_pmf_ : numpy.ndarray, shape=(num_strata,) or (num_strata, max_iter)
-        epsilon-greedy instrumental pmf used for sampling. If
+    inst_pmf_ : numpy.ndarray, shape=(n_strata,) or (n_strata, max_iter)
+        Epsilon-greedy instrumental pmf used for sampling. If
         ``record_inst_hist == False`` only the most recent pmf is returned,
-        else returns the entire history of pmfs in a 2D array.
+        otherwise returns the entire history of pmfs in a 2D array.
 
     References
     ----------
@@ -253,47 +262,72 @@ class OASISSampler(BaseSampler):
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
                  epsilon=1e-3, prior_strength=None, decaying_prior=True,
                  strata=None, record_inst_hist=False, max_iter=None,
-                 indices = None, debug=False, **kwargs):
+                 identifiers=None, debug=False, **kwargs):
         super(OASISSampler, self).__init__(alpha, predictions, oracle,
-                                           max_iter, indices, debug)
-        self.scores = scores
-        self.proba = verify_proba(scores, proba)
+                                           max_iter, identifiers, True, debug)
+        self.scores = verify_scores(scores)
+        self.proba = verify_consistency(self.predictions, self.scores, proba)
         self.prior_strength = prior_strength
         self.epsilon = epsilon
         self.strata = strata
         self.record_inst_hist = record_inst_hist
         self.decaying_prior = decaying_prior
-        self._requires_updating = True
+
+        # Need to transform scores to the [0,1] interval (to use as proxy for
+        # probabilities)
+        if np.any(~self.proba):
+            # Need to convert some of the scores into probabilities
+            self._probs = copy.deepcopy(self.scores)
+            for m in range(self._n_class):
+                if ~self.proba[m]:
+                    #TODO: incorporate threshold (currently assuming zero)
+                    self._probs[:,m] = expit(self.scores[:,m])
+        else:
+            self._probs = self.scores
+
+        # If there are multiple classifiers, we need the probabilities
+        # averaged over the classifiers
+        if self._multiple_class:
+            self._probs_avg_class = np.mean(self._probs, axis=1, keepdims=True)
 
         # Generate strata if not given
         if self.strata is None:
-            self.strata = auto_stratify(self.scores, **kwargs)
+            if self._multiple_class:
+                # Use the probabilities to stratify
+                self.strata = auto_stratify(self._probs_avg_class.ravel(), **kwargs)
+            else:
+                # Use original scores
+                self.strata = auto_stratify(self.scores.ravel(), **kwargs)
 
-        # Calculate mean score and mean prediction per stratum
-        self.strata.mean_score = self.strata.intra_mean(self.scores)
-        self.strata.mean_pred = self.strata.intra_mean(self.predictions)
+        # Calculate mean prediction per stratum
+        self._preds_avg_in_strata = self.strata.intra_mean(self.predictions)
 
         # Choose prior strength if not given
         if self.prior_strength is None:
-            self.prior_strength = 2*self.strata.num_strata_
+            self.prior_strength = 2*self.strata.n_strata_
 
         # Instantiate Beta-Bernoulli model
-        gamma = self._calc_BB_prior(self.strata.mean_score)
+        if self._multiple_class:
+            theta_0 = self.strata.intra_mean(self._probs_avg_class)
+        else:
+            theta_0 = self.strata.intra_mean(self._probs)
+        gamma = self._calc_BB_prior(theta_0.ravel())
         self._BB_model = BetaBernoulliModel(gamma[0], gamma[1],
                                             decaying_prior=self.decaying_prior)
 
-        self._F_guess = self._calc_F_guess(self.alpha, self.strata.mean_pred,
+        self._F_guess = self._calc_F_guess(self.alpha,
+                                           self._preds_avg_in_strata,
                                            self._BB_model.theta_,
                                            self.strata.weights_)
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.num_strata_, self._max_iter],
+            self.inst_pmf_ = np.zeros([self.strata.n_strata_, self._max_iter],
                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.num_strata_, dtype=float)
+            self.inst_pmf_ = np.zeros(self.strata.n_strata_, dtype=float)
 
-    def _sample_item(self):
+    def _sample_item(self, **kwargs):
         """Sample an item from the pool according to the instrumental
         distribution
         """
@@ -313,8 +347,13 @@ class OASISSampler(BaseSampler):
 
         return loc, weight, {'stratum': stratum_idx}
 
-    def _update_sampler(self, ell, ell_hat, loc, weight, extra_info):
-        """Update the instrumental distribution by updating the BB model"""
+    def _update_estimate_and_sampler(self, ell, ell_hat, weight, extra_info,
+                                     **kwargs):
+        #: Updating the estimate is handled in the base class
+        super(OASISSampler, self)._update_estimate_and_sampler(ell, ell_hat, \
+                                                weight, extra_info, **kwargs)
+
+        #: Update the instrumental distribution by updating the BB model
         self._BB_model.update(ell, extra_info['stratum'])
 
     def _calc_BB_prior(self, theta_0):
@@ -322,38 +361,36 @@ class OASISSampler(BaseSampler):
 
         Parameters
         ----------
-        theta_0 : array-like, shape=(num_strata,)
+        theta_0 : array-like, shape=(n_strata,)
             array of oracle probabilities (probability of a "1" label)
             for each stratum. This is just a guess.
 
         Returns
         -------
-        alpha_0 : numpy.ndarray, shape=(num_strata,)
+        alpha_0 : numpy.ndarray, shape=(n_strata,)
             "alpha" hyperparameters for an ensemble of Beta-distributed rvs
 
-        beta_0 : numpy.ndarray, shape=(num_strata,)
+        beta_0 : numpy.ndarray, shape=(n_strata,)
             "beta" hyperparameters for an ensemble of Beta-distributed rvs
         """
         #: Easy vars
         prior_strength = self.prior_strength
-        proba = self.proba
 
         #weighted_strength = self.weights * strength
-        num_strata = len(theta_0)
-        weighted_strength = prior_strength / num_strata
-        if not proba:
-            # Map to [0,1] interval
-            theta_0 = expit(theta_0)
+        n_strata = len(theta_0)
+        weighted_strength = prior_strength / n_strata
         alpha_0 = theta_0 * weighted_strength
         beta_0 = (1 - theta_0) * weighted_strength
         return alpha_0, beta_0
 
     def _calc_F_guess(self, alpha, predictions, theta, weights):
         """Calculate an estimate of the F-measure based on the scores"""
-        num = np.sum(theta * weights * predictions)
-        den = np.sum(theta * weights * (1 - alpha) + \
-                     alpha * predictions * weights)
-        F_guess = 0.5 if den==0 else num/den
+        num = np.sum(predictions.T * theta * weights, axis=1)
+        den = np.sum((1 - alpha) * theta * weights + \
+                     alpha * predictions.T * weights, axis=1)
+        F_guess = num/den
+        # Ensure guess is not undefined
+        F_guess[den==0] = 0.5
         return F_guess
 
     def _calc_inst_pmf(self):
@@ -362,33 +399,30 @@ class OASISSampler(BaseSampler):
         t = self.t_
         epsilon = self.epsilon
         alpha = self.alpha
-        predictions = self.strata.mean_pred
-        weights = self.strata.weights_
-        p1 = self._BB_model.theta_
+        preds = self._preds_avg_in_strata
+        weights = self.strata.weights_[:,np.newaxis]
+        p1 = self._BB_model.theta_[:,np.newaxis]
         p0 = 1 - p1
-        F = np.nan if t == 0 else self.estimate_[t - 1]
+        F = self._F_guess if t == 0 else self.estimate_[t - 1]
 
-        # Use an estimate for the F-measure based on the probs if it is np.nan
-        if np.isnan(F) or F == 0:
-            delta = 1e-10
-            F = np.clip(self._F_guess, delta, 1-delta)
+        # If estimate is non-finite, use the initial estimate
+        F[~np.isfinite(F)] = self._F_guess[~np.isfinite(F)]
 
-        # Predict positive pmf
-        pp_pmf = weights * np.sqrt(alpha**2 * F**2 * p0 + (1 - F)**2 * p1)
-
-        # Predict negative pmf
-        pn_pmf = weights * (1 - alpha) * F * np.sqrt(p1)
-
-        inst_pmf = predictions * pp_pmf + (1 - predictions) * pn_pmf
+        # Calculate optimal instrumental pmf
+        sqrt_arg = np.sum(preds * (alpha**2 * F**2 * p0 + (1 - F)**2 * p1) + \
+                          (1 - preds) * (1 - alpha)**2 * F**2 * p1, \
+                          axis=1, keepdims=True) #: sum is over classifiers
+        inst_pmf = weights * np.sqrt(sqrt_arg)
         # Normalize
-        inst_pmf = inst_pmf/np.sum(inst_pmf)
-        # Epsilon-greedy
-        inst_pmf = epsilon * weights + (1 - epsilon) * inst_pmf
+        inst_pmf /= np.sum(inst_pmf)
+        # Epsilon-greedy: (1 - epsilon) q + epsilon * p
+        inst_pmf *= (1 - epsilon)
+        inst_pmf += epsilon * weights
 
         if self.record_inst_hist:
-            self.inst_pmf_[:,t] = inst_pmf
+            self.inst_pmf_[:,t] = inst_pmf.ravel()
         else:
-            self.inst_pmf_ = inst_pmf
+            self.inst_pmf_ = inst_pmf.ravel()
 
     def reset(self):
         """Resets the sampler to its initial state
@@ -404,7 +438,7 @@ class OASISSampler(BaseSampler):
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.num_strata_, self._max_iter],
+            self.inst_pmf_ = np.zeros([self.strata.n_strata_, self._max_iter],
                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.num_strata_, dtype=float)
+            self.inst_pmf_ = np.zeros(self.strata.n_strata_, dtype=float)
