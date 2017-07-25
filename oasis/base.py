@@ -127,7 +127,7 @@ class PassiveSampler:
         self.predictions = verify_predictions(predictions)
         self._n_class = self.predictions.shape[1]
         self._multiple_class = True if self._n_class > 1 else False
-        self._n_items = predictions.shape[0]
+        self._n_items = self.predictions.shape[0]
         self._max_iter = self._n_items if (max_iter is None) else int(max_iter)
         self.replace = replace
         self.debug=debug

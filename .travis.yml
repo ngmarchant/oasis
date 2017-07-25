@@ -1,0 +1,12 @@
+language: python
+python:
+  - "3.6"
+install:
+  # Install pytest
+  - pip install pytest
+  # Install oasis
+  - pip install -e ."
+# command to run tests
+script:
+  - pytest
+  # Add build docs?
