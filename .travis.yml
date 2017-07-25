@@ -5,7 +5,7 @@ install:
   # Install pytest
   - pip install pytest
   # Install oasis
-  - pip install -e ."
+  - pip install -e .
 # command to run tests
 script:
   - pytest
