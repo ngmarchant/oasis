@@ -3,9 +3,13 @@ from scipy.special import expit
 import copy
 import warnings
 
-from .base import (PassiveSampler, verify_scores, verify_consistency)
+from .base import PassiveSampler
 from .stratification import (Strata, stratify_by_features, stratify_by_scores,
                              auto_stratify)
+from .input_verification import (verify_unit_interval, \
+                                 verify_positive, \
+                                 verify_scores, verify_consistency, \
+                                 verify_boolean, verify_strata)
 
 class BetaBernoulliModel:
     """Beta-Bernoulli model for the stratified oracle probabilities
@@ -267,11 +271,10 @@ class OASISSampler(PassiveSampler):
                                            max_iter, identifiers, True, debug)
         self.scores = verify_scores(scores)
         self.proba = verify_consistency(self.predictions, self.scores, proba)
-        self.prior_strength = prior_strength
-        self.epsilon = epsilon
-        self.strata = strata
-        self.record_inst_hist = record_inst_hist
-        self.decaying_prior = decaying_prior
+        self.epsilon = verify_unit_interval(float(epsilon))
+        self.strata = verify_strata(strata)
+        self.record_inst_hist = verify_boolean(record_inst_hist)
+        self.decaying_prior = verify_boolean(decaying_prior)
 
         # Need to transform scores to the [0,1] interval (to use as proxy for
         # probabilities)
@@ -303,8 +306,8 @@ class OASISSampler(PassiveSampler):
         self._preds_avg_in_strata = self.strata.intra_mean(self.predictions)
 
         # Choose prior strength if not given
-        if self.prior_strength is None:
-            self.prior_strength = 2*self.strata.n_strata_
+        self.prior_strength = 2*self.strata.n_strata_ if (prior_strength is None) else prior_strength
+        self.prior_strength = verify_positive(float(self.prior_strength))
 
         # Instantiate Beta-Bernoulli model
         if self._multiple_class:

@@ -3,9 +3,11 @@ from scipy.special import expit
 import warnings
 import copy
 
-from .base import (PassiveSampler, verify_scores, verify_consistency)
+from .base import PassiveSampler
 from .stratification import auto_stratify
 from .oasis import BetaBernoulliModel
+from .input_verification import (verify_scores, verify_consistency, \
+                                 verify_strata)
 
 class DruckSampler(PassiveSampler):
     """Stratified sampling for estimation of the weighted F-measure
@@ -107,7 +109,7 @@ class DruckSampler(PassiveSampler):
                                            max_iter, identifiers, replace, debug)
         self.scores = verify_scores(scores)
         self.proba = verify_consistency(self.predictions, self.scores, proba)
-        self.strata = strata
+        self.strata = verify_strata(strata)
 
         #: Generate strata if not given
         if self.strata is None:

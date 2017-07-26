@@ -3,7 +3,9 @@ import warnings
 from scipy.special import expit
 import copy
 
-from .base import (PassiveSampler, verify_scores, verify_consistency)
+from .base import PassiveSampler
+from .input_verification import (verify_consistency, verify_unit_interval, \
+                                 verify_scores)
 
 class ImportanceSampler(PassiveSampler):
     """Importance sampling for estimation of the weighted F-measure
@@ -105,7 +107,7 @@ class ImportanceSampler(PassiveSampler):
                                           max_iter, identifiers, True, debug)
         self.scores = verify_scores(scores)
         self.proba = verify_consistency(self.predictions, self.scores, proba)
-        self.epsilon = epsilon
+        self.epsilon = verify_unit_interval(float(epsilon))
 
         # Need to transform scores to the [0,1] interval (to use as proxy for
         # probabilities)

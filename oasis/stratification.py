@@ -225,7 +225,6 @@ class Strata:
         array specifying the stratum weights (sizes/n_items)
     """
     def __init__(self, allocations):
-        # TODO Allow to generate allocations by passing scores etc.
         # TODO Check that input is valid
 
         # Names of strata (could be ints or strings for example)

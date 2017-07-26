@@ -1,59 +1,9 @@
 import numpy as np
 import warnings
 
-def is_pos_integer(number):
-    """Checks whether argument is a positive integer"""
-    if (type(number) is int) and (number > 0):
-        return True
-    else:
-        return False
-
-def verify_predictions(predictions):
-    # Check that it contains only zeros and ones
-    predictions = np.array(predictions, copy=False)
-    if not np.array_equal(predictions, predictions.astype(bool)):
-        raise ValueError("predictions contains invalid values. " +
-                         "The only permitted values are 0 or 1.")
-    if predictions.ndim == 1:
-        predictions = predictions[:,np.newaxis]
-    return predictions
-
-def verify_scores(scores):
-    scores = np.array(scores, copy=False)
-    if np.any(~np.isfinite(scores)):
-        raise ValueError("scores contains invalid values. " +
-                         "Please check that all values are finite.")
-    if scores.ndim == 1:
-        scores = scores[:,np.newaxis]
-    return scores
-
-def verify_consistency(predictions, scores, proba):
-    """Verifies that all arrays have consistent dimensions. Also verifies
-    that the scores are consistent with proba. Returns proba.
-    """
-    if predictions.shape != scores.shape:
-        raise ValueError("predictions and scores arrays have inconsistent " +
-                         "dimensions.")
-
-    n_class = scores.shape[1] if scores.ndim > 1 else 1
-
-    # If proba not given, default to False for all classifiers
-    if proba is None:
-        return np.repeat(False, n_class)
-
-    # Ensure proba is a numpy array (important for case of one classifier)
-    proba = np.array(proba, dtype=bool, ndmin=1)
-
-    if predictions.shape[1] != len(proba):
-        raise ValueError("length of proba and number of columns in " +
-                         "should match.")
-
-    for m in range(n_class):
-        if (np.any(np.logical_or(scores[:,m] < 0, scores[:,m] > 1)) and proba[m]):
-            warnings.warn("Scores fall outside the [0,1] interval for " +
-                          "classifier {}. Setting proba[m]=False.".format(m))
-            proba[m] = False
-    return proba
+from .input_verification import (verify_positive, verify_predictions, \
+                                 verify_boolean, verify_identifiers, \
+                                 verify_unit_interval)
 
 class PassiveSampler:
     """Passive sampling for estimation of the weighted F-measure
@@ -121,16 +71,16 @@ class PassiveSampler:
     """
     def __init__(self, alpha, predictions, oracle, max_iter=None, identifiers=None,
                  replace=True, debug=False):
-        self.alpha = alpha
+        self.alpha = verify_unit_interval(float(alpha))
         self.oracle = oracle
-        self.identifiers = identifiers
         self.predictions = verify_predictions(predictions)
         self._n_class = self.predictions.shape[1]
         self._multiple_class = True if self._n_class > 1 else False
         self._n_items = self.predictions.shape[0]
         self._max_iter = self._n_items if (max_iter is None) else int(max_iter)
-        self.replace = replace
-        self.debug=debug
+        self.identifiers = verify_identifiers(identifiers, self._n_items)
+        self.replace = verify_boolean(replace)
+        self.debug = verify_boolean(debug)
 
         # If sampling without replacement, make sure max_iter is not
         # unnecessarily large
@@ -201,8 +151,7 @@ class PassiveSampler:
         n_to_sample : int
             number of items to sample
         """
-        if not is_pos_integer(n_to_sample):
-            raise ValueError("n_to_sample must be a positive integer.")
+        n_to_sample = verify_positive(int(n_to_sample))
 
         n_remaining = self._max_iter - self.t_
 
