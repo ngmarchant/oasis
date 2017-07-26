@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &#8212; OASIS v0.1.2 documentation</title>
+    <title>Installation &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'v0.1.2',
+        VERSION:     'v0.1.2-2-g7d1c5a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -50,10 +50,11 @@
 supported.</p>
 <div class="section" id="installation-from-source">
 <h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
-<p>Currently the package must be installed from source, although in future it may
-be available on PyPI.</p>
-<p>To clone the source from <a class="reference external" href="https://www.github.com/ngmarchant/oasis">GitHub</a>,
-execute the following command:</p>
+<p>You can get the latest stable release from <a class="reference external" href="https://pypi.python.org/pypi">PyPI</a> by running:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ pip3 install oasis
+</pre></div>
+</div>
+<p>Alternatively, you can experiment with the latest development code by cloning the source from <a class="reference external" href="https://www.github.com/ngmarchant/oasis">GitHub</a>:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>$ git clone https://github.com/ngmarchant/oasis.git
 </pre></div>
 </div>
@@ -69,7 +70,7 @@ $ python3 setup.py install --user
 <ul class="simple">
 <li>numpy</li>
 <li>scipy</li>
-<li>sklearn (to use the experimental stratification method based on features)</li>
+<li>sklearn (to use the experimental stratification method based on K-means clustering)</li>
 <li>tables (to use <code class="xref py py-class docutils literal"><span class="pre">Data</span></code> container)</li>
 </ul>
 <p>These dependencies should be automatically resolved during installation.</p>
