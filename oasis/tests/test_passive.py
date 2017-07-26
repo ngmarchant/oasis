@@ -49,9 +49,9 @@ class TestPassiveSampler:
         assert self.smplr.t_ == 0
         np.testing.assert_equal(self.smplr.cached_labels_, \
                                 np.repeat(np.nan, self.n_items))
-        np.testing.assert_equal(self.smplr.queried_oracle_, \
+        np.testing.assert_equal(self.smplr._queried_oracle, \
                                 np.repeat(False, self.n_items))
-        np.testing.assert_equal(self.smplr.estimate_.ravel(), \
+        np.testing.assert_equal(self.smplr._estimate.ravel(), \
                                 np.repeat(np.nan, self.n_items))
 
     def test_convergence(self):
@@ -60,7 +60,7 @@ class TestPassiveSampler:
         self.smplr.sample(self.n_items)
 
         # estimate should equal true value
-        assert self.smplr.estimate_.ravel()[-1] == self.true_F1
+        assert self.smplr.estimate_[-1] == self.true_F1
 
         # cached labels should equal true ones
         np.testing.assert_equal(self.smplr.cached_labels_,\
