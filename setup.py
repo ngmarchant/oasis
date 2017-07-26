@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='oasis',
-    version='0.1.0',
+    version='0.1.2',
     description='Optimal Asymptotic Sequential Importance Sampling',
     long_description=readme(),
     keywords='F-measure active sampling evaluation classification recall precision',
