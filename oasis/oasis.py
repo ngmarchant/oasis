@@ -325,10 +325,23 @@ class OASISSampler(PassiveSampler):
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.n_strata_, self._max_iter],
-                                     dtype=float)
+            self._inst_pmf = np.zeros([self.strata.n_strata_, self._max_iter],
+                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.n_strata_, dtype=float)
+            self._inst_pmf = np.zeros(self.strata.n_strata_, dtype=float)
+
+    @property
+    def inst_pmf_(self):
+        if self.record_inst_hist:
+            return self._inst_pmf[:, 0:self.t_]
+        else:
+            return self._inst_pmf
+    @inst_pmf_.setter
+    def inst_pmf_(self, value):
+        raise AttributeError("can't set attribute.")
+    @inst_pmf_.deleter
+    def inst_pmf_(self):
+        raise AttributeError("can't delete attribute.")
 
     def _sample_item(self, **kwargs):
         """Sample an item from the pool according to the instrumental
@@ -340,9 +353,9 @@ class OASISSampler(PassiveSampler):
         self._calc_inst_pmf()
 
         if self.record_inst_hist:
-            inst_pmf = self.inst_pmf_[:,t]
+            inst_pmf = self._inst_pmf[:,t]
         else:
-            inst_pmf = self.inst_pmf_
+            inst_pmf = self._inst_pmf
 
         # Sample label and record weight
         loc, stratum_idx = self.strata.sample(pmf = inst_pmf)
@@ -406,7 +419,7 @@ class OASISSampler(PassiveSampler):
         weights = self.strata.weights_[:,np.newaxis]
         p1 = self._BB_model.theta_[:,np.newaxis]
         p0 = 1 - p1
-        F = self._F_guess if t == 0 else self.estimate_[t - 1]
+        F = self._F_guess if t == 0 else self._estimate[t - 1]
 
         # If estimate is non-finite, use the initial estimate
         F[~np.isfinite(F)] = self._F_guess[~np.isfinite(F)]
@@ -423,9 +436,9 @@ class OASISSampler(PassiveSampler):
         inst_pmf += epsilon * weights
 
         if self.record_inst_hist:
-            self.inst_pmf_[:,t] = inst_pmf.ravel()
+            self._inst_pmf[:,t] = inst_pmf.ravel()
         else:
-            self.inst_pmf_ = inst_pmf.ravel()
+            self._inst_pmf = inst_pmf.ravel()
 
     def reset(self):
         """Resets the sampler to its initial state
@@ -441,7 +454,7 @@ class OASISSampler(PassiveSampler):
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self.inst_pmf_ = np.zeros([self.strata.n_strata_, self._max_iter],
-                                     dtype=float)
+            self._inst_pmf = np.zeros([self.strata.n_strata_, self._max_iter],
+                                      dtype=float)
         else:
-            self.inst_pmf_ = np.zeros(self.strata.n_strata_, dtype=float)
+            self._inst_pmf = np.zeros(self.strata.n_strata_, dtype=float)

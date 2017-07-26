@@ -198,7 +198,7 @@ class DruckSampler(PassiveSampler):
             self._PP_rates = self._PP_st/self.strata._n_sampled[:,np.newaxis]
 
         #: Update model estimate (with prior)
-        self.estimate_[self.t_], self._F_num, self._F_den = \
+        self._estimate[self.t_], self._F_num, self._F_den = \
             self._calc_estimate(self._TP_rates, self._PP_rates, \
                                 self._P_rates, return_num_den=True)
 

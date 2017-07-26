@@ -75,7 +75,7 @@ class KadaneSampler(PassiveSampler):
                                          store_wp=False)
 
         # Array to record asymptotic variance estimate
-        self.estimate_var_ = np.repeat(np.nan, self._max_iter)
+        self._estimatevar_ = np.repeat(np.nan, self._max_iter)
         self._cov = np.zeros([3,3])
         self._grad_F = np.zeros(3)
 
@@ -184,7 +184,7 @@ class KadaneSampler(PassiveSampler):
         cov_model = self.cov_model_
 
         #: Estimate of F
-        self.estimate_[t], self._F_num, self._F_den = \
+        self._estimate[t], self._F_num, self._F_den = \
             self._F_measure(alpha, TP, PP - TP, P - TP, return_num_den=True)
 
         #: Estimate of grad F w.r.t. Omega = (TP, PP, P)
@@ -197,7 +197,7 @@ class KadaneSampler(PassiveSampler):
         self._cov = np.tensordot(factor, cov_model, axes=1)
 
         #: Estimate of variance of F estimator
-        self.estimate_var_[t] = \
+        self._estimatevar_[t] = \
             np.dot(self._grad_F, np.dot(self._cov, self._grad_F))
 
         #: Expected decrease in variance (for each stratum) if an additional
@@ -248,7 +248,7 @@ class KadaneSampler(PassiveSampler):
         #weights = self.strata.weights_
         epsilon = self.epsilon
         var_decrease = self._var_decrease
-        estimate_var = self.estimate_var_[0] if t == 0 else self.estimate_var_[t-1]
+        estimate_var = self._estimatevar_[0] if t == 0 else self._estimatevar_[t-1]
 
         #: Expected relative decrease in variance (per stratum)
         rel_var_decrease = var_decrease/estimate_var
@@ -392,7 +392,7 @@ class KadaneSampler(PassiveSampler):
         else:
             self.inst_pmf_ = np.zeros(self.strata.n_strata_, dtype=float)
 
-        self.estimate_var_ = np.repeat(np.nan, self._max_iter)
+        self._estimatevar_ = np.repeat(np.nan, self._max_iter)
         self._cov = np.zeros([3,3])
         self._grad_F = np.zeros(3)
 
@@ -567,7 +567,7 @@ class OptKadaneSampler(KadaneSampler):
         cov_model = self.cov_model_
 
         #: Estimate of F
-        self.estimate_[t], self._F_num, self._F_den = \
+        self._estimate[t], self._F_num, self._F_den = \
             self._F_measure(alpha, TP, PP - TP, P - TP, return_num_den=True)
 
         #: Estimate of cov(omega)

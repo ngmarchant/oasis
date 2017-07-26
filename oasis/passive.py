@@ -103,12 +103,40 @@ class PassiveSampler:
         self.t_ = 0
 
         # Array to record whether oracle was queried at each iteration
-        self.queried_oracle_ = np.repeat(False, self._max_iter)
+        self._queried_oracle = np.repeat(False, self._max_iter)
 
         self.cached_labels_ = np.repeat(np.nan, self._n_items)
 
         # Array to record history of F-measure estimates
-        self.estimate_ = np.tile(np.nan, [self._max_iter, self._n_class])
+        self._estimate = np.tile(np.nan, [self._max_iter, self._n_class])
+
+    @property
+    def estimate_(self):
+        if self.t_ == 0:
+            return None
+        if self._multiple_class:
+            return self._estimate[0:self.t_,:]
+        else:
+            return self._estimate[0:self.t_,:].ravel()
+    @estimate_.setter
+    def estimate_(self, value):
+        raise AttributeError("can't set attribute.")
+    @estimate_.deleter
+    def estimate_(self):
+        raise AttributeError("can't delete attribute.")
+
+    @property
+    def queried_oracle_(self):
+        if self.t_ == 0:
+            return None
+        else:
+            return self._queried_oracle[0:self.t_]
+    @queried_oracle_.setter
+    def queried_oracle_(self, value):
+        raise AttributeError("can't set attribute.")
+    @queried_oracle_.deleter
+    def queried_oracle_(self):
+        raise AttributeError("can't delete attribute.")
 
     def reset(self):
         """Resets the sampler to its initial state
@@ -122,9 +150,9 @@ class PassiveSampler:
         self._FN = np.zeros(self._n_class)
         self._TN = np.zeros(self._n_class)
         self.t_ = 0
-        self.queried_oracle_ = np.repeat(False, self._max_iter)
+        self._queried_oracle = np.repeat(False, self._max_iter)
         self.cached_labels_ = np.repeat(np.nan, self._n_items)
-        self.estimate_ = np.tile(np.nan, [self._max_iter, self._n_class])
+        self._estimate = np.tile(np.nan, [self._max_iter, self._n_class])
 
     def _iterate(self, **kwargs):
         """Procedure for a single iteration (sampling and updating)"""
@@ -198,7 +226,7 @@ class PassiveSampler:
         n_sampled = 0 # number of distinct items sampled this round
         while n_sampled < n_to_sample:
             self.sample(1,**kwargs)
-            n_sampled += self.queried_oracle_[self.t_ - 1]*1
+            n_sampled += self._queried_oracle[self.t_ - 1]*1
 
     def _sample_item(self, **kwargs):
         """Sample an item from the pool"""
@@ -232,7 +260,7 @@ class PassiveSampler:
             if ell not in [0, 1]:
                 raise Exception("Oracle provided an invalid label.")
             #TODO Gracefully handle errors from oracle?
-            self.queried_oracle_[self.t_] = True
+            self._queried_oracle[self.t_] = True
             self.cached_labels_[loc] = ell
 
         return ell
@@ -258,5 +286,5 @@ class PassiveSampler:
         self._FN += (1 - ell_hat) * ell * weight
         self._TN += (1 - ell_hat) * (1 - ell) * weight
 
-        self.estimate_[self.t_] = \
+        self._estimate[self.t_] = \
                 self._F_measure(self.alpha, self._TP, self._FP, self._FN)

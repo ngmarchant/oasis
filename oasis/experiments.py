@@ -23,7 +23,7 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
 
     FILTERS = tables.Filters(complib='zlib', complevel=5)
 
-    max_iter = len(sampling_obj.estimate_)
+    max_iter = sampling_obj._max_iter
     if max_iter < num_labels:
         raise ValueError("Cannot query {} labels. {} supports only {} \
             iterations".format(num_labels, sampling_obj.__name__, max_iter))
@@ -50,10 +50,10 @@ def repeat_expt(sampling_obj, num_expts, num_labels, output_file = None):
         sampling_obj.reset()
         sampling_obj.sample_distinct(num_labels)
         tf = time.process_time()
-        if hasattr(sampling_obj, 'queried_oracle'):
+        if hasattr(sampling_obj, 'queried_oracle_'):
             array_F.append([sampling_obj.estimate_[sampling_obj.queried_oracle_]])
         else:
-            array_F.append([sampling_obj.estimate_[0:num_labels]])
+            array_F.append([sampling_obj.estimate_])
         array_s[idx] = sampling_obj.t_
         array_t[idx] = tf - ti
     f.close()

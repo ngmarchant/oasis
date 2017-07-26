@@ -133,15 +133,25 @@ class ImportanceSampler(PassiveSampler):
                                                self.predictions,
                                                self._probs.ravel())
 
-        self.inst_pmf_ = np.empty(self._n_items, dtype=float)
+        self._inst_pmf = np.empty(self._n_items, dtype=float)
         self._initialise_pmf()
+
+    @property
+    def inst_pmf_(self):
+        return self._inst_pmf
+    @inst_pmf_.setter
+    def inst_pmf_(self, value):
+        raise AttributeError("can't set attribute.")
+    @inst_pmf_.deleter
+    def inst_pmf_(self):
+        raise AttributeError("can't delete attribute.")
 
     def _sample_item(self, **kwargs):
         """Sample an item from the pool according to the instrumental
         distribution
         """
-        loc = np.random.choice(self._n_items, p = self.inst_pmf_)
-        weight = (1/self._n_items)/self.inst_pmf_[loc]
+        loc = np.random.choice(self._n_items, p = self._inst_pmf)
+        weight = (1/self._n_items)/self._inst_pmf[loc]
         return loc, weight, {}
 
     def _calc_F_guess(self, alpha, predictions, probabilities):
@@ -169,9 +179,9 @@ class ImportanceSampler(PassiveSampler):
         sqrt_arg = np.sum(preds * (alpha**2 * F**2 * p0 + (1 - F)**2 * p1) + \
                           (1 - preds) * (1 - alpha)**2 * F**2 * p1, \
                           axis=1) #: sum is over classifiers
-        self.inst_pmf_ = np.sqrt(sqrt_arg)
+        self._inst_pmf = np.sqrt(sqrt_arg)
         # Normalize
-        self.inst_pmf_ /= np.sum(self.inst_pmf_)
+        self._inst_pmf /= np.sum(self._inst_pmf)
         # Epsilon-greedy: (1 - epsilon) q + epsilon * p
-        self.inst_pmf_ *= (1 - epsilon)
-        self.inst_pmf_ += epsilon * 1/n_items
+        self._inst_pmf *= (1 - epsilon)
+        self._inst_pmf += epsilon * 1/n_items

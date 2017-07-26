@@ -1,5 +1,3 @@
-- Use @property for estimate_, queried_oracle_ to exclude tail of array that has
-yet to be filled.
 - Optional threshold argument for Stratified, Sawade and OASIS
 - Permit vector alpha (e.g. alpha = [0, 1]) to estimate precision and recall
 concurrently
