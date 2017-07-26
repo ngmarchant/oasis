@@ -3,7 +3,7 @@ from scipy.special import expit
 import copy
 import warnings
 
-from .base import PassiveSampler
+from .passive import PassiveSampler
 from .stratification import (Strata, stratify_by_features, stratify_by_scores,
                              auto_stratify)
 from .input_verification import (verify_unit_interval, \

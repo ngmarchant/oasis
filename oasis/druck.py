@@ -3,7 +3,7 @@ from scipy.special import expit
 import warnings
 import copy
 
-from .base import PassiveSampler
+from .passive import PassiveSampler
 from .stratification import auto_stratify
 from .oasis import BetaBernoulliModel
 from .input_verification import (verify_scores, verify_consistency, \

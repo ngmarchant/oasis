@@ -1,4 +1,4 @@
-from .base import PassiveSampler
+from .passive import PassiveSampler
 from .stratification import (Strata, stratify_by_scores, stratify_by_features)
 from .sawade import ImportanceSampler
 from .oasis import OASISSampler

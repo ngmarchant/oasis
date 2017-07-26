@@ -69,8 +69,8 @@ class PassiveSampler:
     t_ : int
         Iteration index.
     """
-    def __init__(self, alpha, predictions, oracle, max_iter=None, identifiers=None,
-                 replace=True, debug=False):
+    def __init__(self, alpha, predictions, oracle, max_iter=None,
+                 identifiers=None, replace=True, debug=False):
         self.alpha = verify_unit_interval(float(alpha))
         self.oracle = oracle
         self.predictions = verify_predictions(predictions)

@@ -62,7 +62,7 @@ def verify_consistency(predictions, scores, proba):
 def verify_unit_interval(value):
     """Throw an exception if the value is not on the unit interval [0,1].
     """
-    if not (value >= 0 or value <= 1):
+    if not (value >= 0 and value <= 1):
         raise ValueError("expected value on the interval [0, 1].")
     return value
 

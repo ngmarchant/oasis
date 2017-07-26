@@ -3,7 +3,7 @@ import warnings
 from scipy.special import expit
 import copy
 
-from .base import PassiveSampler
+from .passive import PassiveSampler
 from .input_verification import (verify_consistency, verify_unit_interval, \
                                  verify_scores)
 
