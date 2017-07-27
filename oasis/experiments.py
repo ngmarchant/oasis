@@ -23,8 +23,8 @@ def repeat_expt(smplr, n_expts, n_labels, output_file = None):
     max_iter = smplr._max_iter
     n_class = smplr._n_class
     if max_iter < n_labels:
-        raise ValueError("Cannot query {} labels. {} supports only {} \
-            iterations".format(n_labels, smplr.__name__, max_iter))
+        raise ValueError("Cannot query {} labels. Sampler ".format(n_labels) +
+                         "instance supports only {} iterations".format(max_iter))
 
     if output_file is None:
         # Use current date/time as filename
@@ -42,7 +42,7 @@ def repeat_expt(smplr, n_expts, n_labels, output_file = None):
 
     logging.info("Starting {} experiments".format(n_expts))
     for i in range(n_expts):
-        if i%np.ceil(n_labels/10).astype(int) == 0:
+        if i%np.ceil(n_expts/10).astype(int) == 0:
             logging.info("Completed {} of {} experiments".format(i, n_expts))
         ti = time.process_time()
         smplr.reset()
