@@ -71,11 +71,10 @@ class DruckSampler(PassiveSampler):
     Other Parameters
     ----------------
     opt_class : array-like, dtype=bool, shape=(n_class,), optional, default None
-        Indicates which classifiers to use in calculating the optimal
-        distribution (and prior and strata). If opt_class is False for a
-        classifier, then its predictions and scores will not be used in
-        calculating the optimal distribution, however estimates of its
-        performance will still be calculated.
+        Indicates which classifier scores to use when stratifying the pool (if
+        `strata` is None). If opt_class is False for a classifier, then its
+        scores will not be used in calculating the strata, however estimates of
+        its performance will still be calculated.
 
     identifiers : array-like, optional, default None
         Unique identifiers for the items in the pool. Must match the row order

@@ -69,10 +69,10 @@ class ImportanceSampler(PassiveSampler):
     ----------------
     opt_class : array-like, dtype=bool, shape=(n_class,), optional, default None
         Indicates which classifiers to use in calculating the optimal
-        distribution (and prior and strata). If opt_class is False for a
-        classifier, then its predictions and scores will not be used in
-        calculating the optimal distribution, however estimates of its
-        performance will still be calculated.
+        distribution. If opt_class is False for a classifier, then its
+        predictions and scores will not be used in calculating the optimal
+        distribution, however estimates of its performance will still be
+        calculated.
 
     identifiers : array-like, optional, default None
         Unique identifiers for the items in the pool. Must match the row order
