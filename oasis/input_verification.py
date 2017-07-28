@@ -1,4 +1,5 @@
 import numpy as np
+from .stratification import Strata
 
 def verify_positive(value):
     """Throws exception if value is not positive"""
@@ -31,9 +32,13 @@ def verify_scores(scores):
         scores = scores[:,np.newaxis]
     return scores
 
-def verify_consistency(predictions, scores, proba):
+def verify_consistency(predictions, scores, proba, opt_class):
     """Verifies that all arrays have consistent dimensions. Also verifies
-    that the scores are consistent with proba. Returns proba.
+    that the scores are consistent with proba.
+
+    Returns
+    -------
+    proba, opt_class
     """
     if predictions.shape != scores.shape:
         raise ValueError("predictions and scores arrays have inconsistent " +
@@ -43,21 +48,31 @@ def verify_consistency(predictions, scores, proba):
 
     # If proba not given, default to False for all classifiers
     if proba is None:
-        return np.repeat(False, n_class)
+        proba = np.repeat(False, n_class)
 
-    # Ensure proba is a numpy array (important for case of one classifier)
+    # If opt_class is not given, default to True for all classifiers
+    if opt_class is None:
+        opt_class = np.repeat(True, n_class)
+
+    # Convert to numpy arrays if necessary
     proba = np.array(proba, dtype=bool, ndmin=1)
+    opt_class = np.array(opt_class, dtype=bool, ndmin=1)
+
+    if np.sum(opt_class) < 1:
+        raise ValueError("opt_class should contain at least one True value.")
 
     if predictions.shape[1] != len(proba):
-        raise ValueError("length of proba and number of columns in " +
-                         "should match.")
+        raise ValueError("mismatch in shape of proba and predictions.")
+    if predictions.shape[1] != len(opt_class):
+        raise ValueError("mismatch in shape of opt_class and predictions.")
 
     for m in range(n_class):
         if (np.any(np.logical_or(scores[:,m] < 0, scores[:,m] > 1)) and proba[m]):
             warnings.warn("scores fall outside the [0,1] interval for " +
                           "classifier {}. Setting proba[m]=False.".format(m))
             proba[m] = False
-    return proba
+
+    return proba, opt_class
 
 def verify_unit_interval(value):
     """Throw an exception if the value is not on the unit interval [0,1].
@@ -95,6 +110,6 @@ def verify_strata(strata):
     """Ensure that input is of type `Strata`"""
     if strata is None:
         return strata
-    if isinstance(x, oasis.Strata):
+    if not isinstance(strata, Strata):
         raise ValueError("expected an instance of the Strata class")
     return strata

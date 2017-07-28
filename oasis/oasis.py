@@ -213,6 +213,13 @@ class OASISSampler(PassiveSampler):
 
     Other Parameters
     ----------------
+    opt_class : array-like, dtype=bool, shape=(n_class,), optional, default None
+        Indicates which classifiers to use in calculating the optimal
+        distribution (and prior and strata). If opt_class is False for a
+        classifier, then its predictions and scores will not be used in
+        calculating the optimal distribution, however estimates of its
+        performance will still be calculated.
+
     decaying_prior : bool, optional, default True
         Whether to make the prior strength decay as 1/n_k, where n_k is the
         number of items sampled from stratum k at the current iteration. This
@@ -264,13 +271,14 @@ class OASISSampler(PassiveSampler):
        Sampling, arXiv:1703.00617 [cs.LG], Mar 2017.
     """
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
-                 epsilon=1e-3, prior_strength=None, decaying_prior=True,
-                 strata=None, record_inst_hist=False, max_iter=None,
-                 identifiers=None, debug=False, **kwargs):
+                 epsilon=1e-3, opt_class=None, prior_strength=None,
+                 decaying_prior=True, strata=None, record_inst_hist=False,
+                 max_iter=None, identifiers=None, debug=False, **kwargs):
         super(OASISSampler, self).__init__(alpha, predictions, oracle,
                                            max_iter, identifiers, True, debug)
         self.scores = verify_scores(scores)
-        self.proba = verify_consistency(self.predictions, self.scores, proba)
+        self.proba, self.opt_class = \
+            verify_consistency(self.predictions, self.scores, proba, opt_class)
         self.epsilon = verify_unit_interval(float(epsilon))
         self.strata = verify_strata(strata)
         self.record_inst_hist = verify_boolean(record_inst_hist)
@@ -284,36 +292,44 @@ class OASISSampler(PassiveSampler):
             for m in range(self._n_class):
                 if ~self.proba[m]:
                     #TODO: incorporate threshold (currently assuming zero)
-                    self._probs[:,m] = expit(self.scores[:,m])
+                    # find most extreme absolute score
+                    min_max_score = max(np.abs(np.min(self.scores[:,m])),\
+                                        np.abs(np.max(self.scores[:,m])))
+                    eps = 0.01 # how close to approach 0/1 probability
+                    k = np.log((1-eps)/eps)/min_max_score # scale factor
+                    self._probs[:,m] = expit(k * self.scores[:,m])
         else:
             self._probs = self.scores
 
-        # If there are multiple classifiers, we need the probabilities
-        # averaged over the classifiers
-        if self._multiple_class:
-            self._probs_avg_class = np.mean(self._probs, axis=1, keepdims=True)
+        # Average the probabilities over opt_class
+        self._probs_avg_opt_class = np.mean(self._probs[:,self.opt_class], \
+                                            axis=1, keepdims=True)
 
         # Generate strata if not given
         if self.strata is None:
-            if self._multiple_class:
-                # Use the probabilities to stratify
-                self.strata = auto_stratify(self._probs_avg_class.ravel(), **kwargs)
+            if np.sum(self.opt_class) > 1:
+                # If optimising over multiple classifiers, use the averaged
+                # probabilities to stratify
+                self.strata = \
+                    auto_stratify(self._probs_avg_opt_class.ravel(), **kwargs)
             else:
-                # Use original scores
-                self.strata = auto_stratify(self.scores.ravel(), **kwargs)
+                # Otherwise use scores from single classifier to stratify
+                self.strata = \
+                    auto_stratify(self.scores[:,self.opt_class].ravel(), \
+                                  **kwargs)
 
         # Calculate mean prediction per stratum
         self._preds_avg_in_strata = self.strata.intra_mean(self.predictions)
 
         # Choose prior strength if not given
-        self.prior_strength = 2*self.strata.n_strata_ if (prior_strength is None) else prior_strength
-        self.prior_strength = verify_positive(float(self.prior_strength))
-
-        # Instantiate Beta-Bernoulli model
-        if self._multiple_class:
-            theta_0 = self.strata.intra_mean(self._probs_avg_class)
+        if prior_strength is None:
+            self.prior_strength = 2*self.strata.n_strata_
         else:
-            theta_0 = self.strata.intra_mean(self._probs)
+            self.prior_strength = verify_positive(float(self.prior_strength))
+
+        # Instantiate Beta-Bernoulli model using probabilities averaged over
+        # opt_class
+        theta_0 = self.strata.intra_mean(self._probs_avg_opt_class)
         gamma = self._calc_BB_prior(theta_0.ravel())
         self._BB_model = BetaBernoulliModel(gamma[0], gamma[1],
                                             decaying_prior=self.decaying_prior)
@@ -419,10 +435,13 @@ class OASISSampler(PassiveSampler):
         weights = self.strata.weights_[:,np.newaxis]
         p1 = self._BB_model.theta_[:,np.newaxis]
         p0 = 1 - p1
-        F = self._F_guess if t == 0 else self._estimate[t - 1]
-
-        # If estimate is non-finite, use the initial estimate
-        F[~np.isfinite(F)] = self._F_guess[~np.isfinite(F)]
+        if t==0:
+            F = self._F_guess[self.opt_class]
+        else:
+            F = self._estimate[t - 1, self.opt_class]
+            # Fill in non-finite estimates with the initial guess
+            nonfinite = ~np.isfinite(F)
+            F[nonfinite] = self._F_guess[self.opt_class][nonfinite]
 
         # Calculate optimal instrumental pmf
         sqrt_arg = np.sum(preds * (alpha**2 * F**2 * p0 + (1 - F)**2 * p1) + \

@@ -67,6 +67,13 @@ class ImportanceSampler(PassiveSampler):
 
     Other Parameters
     ----------------
+    opt_class : array-like, dtype=bool, shape=(n_class,), optional, default None
+        Indicates which classifiers to use in calculating the optimal
+        distribution (and prior and strata). If opt_class is False for a
+        classifier, then its predictions and scores will not be used in
+        calculating the optimal distribution, however estimates of its
+        performance will still be calculated.
+
     identifiers : array-like, optional, default None
         Unique identifiers for the items in the pool. Must match the row order
         of the "predictions" parameter. If no value is given, defaults to
@@ -102,11 +109,13 @@ class ImportanceSampler(PassiveSampler):
        2010, pp. 2083–2091
     """
     def __init__(self, alpha, predictions, scores, oracle, proba=False,
-                 epsilon=1e-3, max_iter=None, identifiers=None, debug=False):
+                 epsilon=1e-3, opt_class=None, max_iter=None, identifiers=None,
+                 debug=False):
         super(ImportanceSampler, self).__init__(alpha, predictions, oracle,
                                           max_iter, identifiers, True, debug)
         self.scores = verify_scores(scores)
-        self.proba = verify_consistency(self.predictions, self.scores, proba)
+        self.proba, self.opt_class = \
+            verify_consistency(self.predictions, self.scores, proba, opt_class)
         self.epsilon = verify_unit_interval(float(epsilon))
 
         # Need to transform scores to the [0,1] interval (to use as proxy for
@@ -117,21 +126,20 @@ class ImportanceSampler(PassiveSampler):
             for m in range(self._n_class):
                 if ~self.proba[m]:
                     #TODO: incorporate threshold (currently assuming zero)
-                    self._probs[:,m] = expit(self.scores[:,m])
+                    min_max_score = max(np.abs(np.min(self.scores[:,m])),\
+                                        np.abs(np.max(self.scores[:,m])))
+                    eps = 0.01 # how close to approach 0/1 probability
+                    k = np.log((1-eps)/eps)/min_max_score # scale factor
+                    self._probs[:,m] = expit(k * self.scores[:,m])
         else:
             self._probs = self.scores
 
-        # If there are multiple classifiers, we need the probabilities
-        # averaged over the classifiers
-        if self._multiple_class:
-            self._probs_avg_class = np.mean(self._probs, axis=1, keepdims=True)
-            self._F_guess = self._calc_F_guess(self.alpha,
-                                               self.predictions,
-                                               self._probs_avg_class.ravel())
-        else:
-            self._F_guess = self._calc_F_guess(self.alpha,
-                                               self.predictions,
-                                               self._probs.ravel())
+        # Average the probabilities over opt_class
+        self._probs_avg_opt_class =  np.mean(self._probs[:,self.opt_class], \
+                                             axis=1, keepdims=True)
+        self._F_guess = self._calc_F_guess(self.alpha,
+                                           self.predictions,
+                                           self._probs_avg_opt_class.ravel())
 
         self._inst_pmf = np.empty(self._n_items, dtype=float)
         self._initialise_pmf()
@@ -170,7 +178,7 @@ class ImportanceSampler(PassiveSampler):
         epsilon = self.epsilon
         alpha = self.alpha
         preds = self.predictions
-        p1 = self._probs_avg_class if self._multiple_class else self._probs
+        p1 = self._probs_avg_opt_class
         p0 = 1 - p1
         n_items = self._n_items
         F = self._F_guess
