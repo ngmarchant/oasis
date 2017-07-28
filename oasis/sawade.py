@@ -5,7 +5,7 @@ import copy
 
 from .passive import PassiveSampler
 from .input_verification import (verify_consistency, verify_unit_interval, \
-                                 verify_scores)
+                                 verify_scores, scores_to_probs)
 
 class ImportanceSampler(PassiveSampler):
     """Importance sampling for estimation of the weighted F-measure
@@ -120,19 +120,7 @@ class ImportanceSampler(PassiveSampler):
 
         # Need to transform scores to the [0,1] interval (to use as proxy for
         # probabilities)
-        if np.any(~self.proba):
-            # Need to convert some of the scores into probabilities
-            self._probs = copy.deepcopy(self.scores)
-            for m in range(self._n_class):
-                if ~self.proba[m]:
-                    #TODO: incorporate threshold (currently assuming zero)
-                    min_max_score = max(np.abs(np.min(self.scores[:,m])),\
-                                        np.abs(np.max(self.scores[:,m])))
-                    eps = 0.01 # how close to approach 0/1 probability
-                    k = np.log((1-eps)/eps)/min_max_score # scale factor
-                    self._probs[:,m] = expit(k * self.scores[:,m])
-        else:
-            self._probs = self.scores
+        self._probs = scores_to_probs(self.scores, self.proba)
 
         # Average the probabilities over opt_class
         self._probs_avg_opt_class =  np.mean(self._probs[:,self.opt_class], \

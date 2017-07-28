@@ -113,3 +113,21 @@ def verify_strata(strata):
     if not isinstance(strata, Strata):
         raise ValueError("expected an instance of the Strata class")
     return strata
+
+def scores_to_probs(scores, proba, eps=0.01):
+    """Transforms scores to probabilities by applying the logistic function"""
+    if np.any(~proba):
+        # Need to convert some of the scores into probabilities
+        probs = copy.deepcopy(scores)
+        n_class = len(proba)
+        for m in range(n_class):
+            if not proba[m]:
+                #TODO: incorporate threshold (currently assuming zero)
+                # find most extreme absolute score
+                max_extreme_score = max(np.abs(np.min(scores[:,m])),\
+                                    np.abs(np.max(scores[:,m])))
+                k = np.log((1-eps)/eps)/max_extreme_score # scale factor
+                self._probs[:,m] = expit(k * self.scores[:,m])
+        return probs
+    else:
+        return scores

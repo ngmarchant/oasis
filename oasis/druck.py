@@ -7,7 +7,7 @@ from .passive import PassiveSampler
 from .stratification import auto_stratify
 from .oasis import BetaBernoulliModel
 from .input_verification import (verify_scores, verify_consistency, \
-                                 verify_strata)
+                                 verify_strata, scores_to_probs)
 
 class DruckSampler(PassiveSampler):
     """Stratified sampling for estimation of the weighted F-measure
@@ -122,19 +122,7 @@ class DruckSampler(PassiveSampler):
         if self.strata is None:
             # Need to transform scores to a common range [0,1] (so that we can
             # average them)
-            if np.any(~self.proba):
-                # Need to convert some of the scores into probabilities
-                self._probs = copy.deepcopy(self.scores)
-                for m in range(self._n_class):
-                    if ~self.proba[m]:
-                        #TODO: incorporate threshold (currently assuming zero)
-                        min_max_score = max(np.abs(np.min(self.scores[:,m])),\
-                                            np.abs(np.max(self.scores[:,m])))
-                        eps = 0.01 # how close to approach 0/1 probability
-                        k = np.log((1-eps)/eps)/min_max_score # scale factor
-                        self._probs[:,m] = expit(k * self.scores[:,m])
-            else:
-                self._probs = self.scores
+            self._probs = scores_to_probs(self.scores, self.proba)
 
             if np.sum(self.opt_class) > 1:
                 # Average the probabilities over opt_class
