@@ -79,6 +79,7 @@ class PassiveSampler:
         self._n_items = self.predictions.shape[0]
         self._max_iter = self._n_items if (max_iter is None) else int(max_iter)
         self.identifiers = verify_identifiers(identifiers, self._n_items)
+        # replace means sample with replacement if self.replace is True
         self.replace = verify_boolean(replace)
         self.debug = verify_boolean(debug)
 
@@ -163,7 +164,7 @@ class PassiveSampler:
         # Get predictions
         ell_hat = self.predictions[loc,:]
 
-        if self.debug == True:
+        if self.debug:
             print("Sampled label {} for item {}.".format(ell,loc))
 
         # Update

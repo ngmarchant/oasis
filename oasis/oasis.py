@@ -2,8 +2,11 @@ import numpy as np
 from scipy.special import expit
 import copy
 import warnings
+import sys
 
-from .passive import PassiveSampler
+sys.path.append('..')
+
+from oasis.passive import PassiveSampler
 from .stratification import (Strata, stratify_by_features, stratify_by_scores,
                              auto_stratify)
 from .input_verification import (verify_unit_interval, \
@@ -465,3 +468,17 @@ class OASISSampler(PassiveSampler):
                                       dtype=float)
         else:
             self._inst_pmf = np.zeros(self.strata.n_strata_, dtype=float)
+
+
+if __name__ == '__main__':
+    from oasis.experiments import Data
+    data = Data()
+    data.read_h5('Amazon-GoogleProducts-test.h5')
+
+    def oracle(idx):
+        return data.labels[idx]
+    alpha = 0.5
+
+    smplr =OASISSampler(alpha, data.preds, data.scores, oracle)
+    smplr.sample_distinct(5000)  #: query labels for 5000 distinct items
+

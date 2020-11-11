@@ -1,7 +1,4 @@
 import numpy as np
-import warnings
-from scipy.special import expit
-import copy
 
 from .passive import PassiveSampler
 from .input_verification import (verify_consistency, verify_unit_interval, \

@@ -1,5 +1,8 @@
 import numpy as np
+import copy
 from .stratification import Strata
+import warnings
+from scipy.special import expit
 
 def verify_positive(value):
     """Throws exception if value is not positive"""
@@ -127,7 +130,7 @@ def scores_to_probs(scores, proba, eps=0.01):
                 max_extreme_score = max(np.abs(np.min(scores[:,m])),\
                                     np.abs(np.max(scores[:,m])))
                 k = np.log((1-eps)/eps)/max_extreme_score # scale factor
-                self._probs[:,m] = expit(k * self.scores[:,m])
+                probs[:,m] = expit(k * scores[:,m])
         return probs
     else:
         return scores
