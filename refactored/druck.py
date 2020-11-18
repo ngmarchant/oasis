@@ -1,13 +1,7 @@
 import numpy as np
-from scipy.special import expit
-import warnings
-import copy
+from refactored.stratification import Strata, stratify_by_cum_sqrt_f_method
+from refactored.passive import PassiveSampler
 
-from .passive import PassiveSampler
-from .stratification import auto_stratify
-from .oasis import BetaBernoulliModel
-from .input_verification import (verify_scores, verify_consistency, \
-                                 verify_strata, scores_to_probs)
 
 class DruckSampler(PassiveSampler):
     """Stratified sampling for estimation of the weighted F-measure
@@ -108,67 +102,31 @@ class DruckSampler(PassiveSampler):
        Information and Knowledge Management, 2011, pp. 947–956.
 
     """
-    def __init__(self, alpha, predictions, scores, oracle, proba=False,
-                 opt_class=None, strata=None, max_iter=None, identifiers=None,
-                 replace=True, debug=False, **kwargs):
-        super(DruckSampler, self).__init__(alpha, predictions, oracle,
-                                           max_iter, identifiers, replace, debug)
-        self.scores = verify_scores(scores)
-        self.proba, self.opt_class = \
-            verify_consistency(self.predictions, self.scores, proba, opt_class)
-        self.strata = verify_strata(strata)
+    def __init__(self, alpha, predictions, scores, oracle, max_iter=None):
+        super(DruckSampler, self).__init__(alpha,predictions, scores, oracle, max_iter=max_iter)
 
-        #: Generate strata if not given
-        if self.strata is None:
-            # Need to transform scores to a common range [0,1] (so that we can
-            # average them)
-            self._probs = scores_to_probs(self.scores, self.proba)
-
-            if np.sum(self.opt_class) > 1:
-                # Average the probabilities over opt_class
-                self._probs_avg_opt_class = np.mean(self._probs[:,self.opt_class], \
-                                                     axis=1, keepdims=True)
-                # If optimising over multiple classifiers, use the averaged
-                # probabilities to stratify
-                self.strata = \
-                    auto_stratify(self._probs_avg_opt_class.ravel(), **kwargs)
-            else:
-                # Otherwise use scores from single classifier to stratify
-                self.strata = \
-                    auto_stratify(self.scores[:,self.opt_class].ravel(), \
-                                  **kwargs)
+        self.strata = Strata(stratify_by_cum_sqrt_f_method(scores))
 
         #: Number of TP, PP, P sampled per stratum
-        self._TP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_st = np.zeros([self.strata.n_strata_, self._n_class])
+        self._TP_st = np.zeros(self.strata.n_strata_)
+        self._PP_st = np.zeros(self.strata.n_strata_)
+        self._P_st = np.zeros(self.strata.n_strata_)
 
-        #: Rate at which TP, PP, P are sampled per stratum
-        self._TP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_rates = np.zeros([self.strata.n_strata_, self._n_class])
+        for i in range(2):
+            for j in range(self.strata.n_strata_):
+                self.sample(1, stratum_idx=j)
 
-        #: Initialise with two samples from each stratum
-        #TODO: Fails if stratum contains only one item. Fix at reset also.
-        for k in self.strata.indices_:
-            for i in range(2):
-                self._iterate(fixed_stratum = k, calc_rates = False)
-
-    def _sample_item(self, **kwargs):
+    def _sample_item(self, sample_with_replacement: bool, **kwargs):
         """Sample an item from the strata"""
-        if 'fixed_stratum' in kwargs:
-            stratum_idx = kwargs['fixed_stratum']
-        else:
-            stratum_idx = None
+
+        stratum_idx = kwargs.get('stratum_idx')
         if stratum_idx is not None:
             #: Sample in given stratum
-            loc = self.strata._sample_in_stratum(stratum_idx,
-                                                 replace=self.replace)
+            loc = self.strata._sample_in_stratum(stratum_idx, replace=sample_with_replacement)
         else:
-            loc, stratum_idx = self.strata.sample(pmf = self.strata.weights_,
-                                                  replace=self.replace)
+            loc, stratum_idx = self.strata.sample(replace=sample_with_replacement)
 
-        return loc, 1, {'stratum': stratum_idx}
+        return loc, 1
 
     def _calc_estimate(self, TP_rates, PP_rates, P_rates, return_num_den=False):
         """
@@ -183,47 +141,17 @@ class DruckSampler(PassiveSampler):
         return self._F_measure(alpha, TP, PP - TP, P - TP, \
                                return_num_den=return_num_den)
 
-    def _update_estimate_and_sampler(self, ell, ell_hat, weight, extra_info,
-                                     **kwargs):
+    def _update_estimate_and_sampler(self, ell, ell_hat, weight, **kwargs):
         """Update the estimate after querying the label for an item"""
 
-        stratum_idx = extra_info['stratum']
-
-        if 'calc_rates' in kwargs:
-            calc_rates = kwargs['calc_rates']
-        else:
-            calc_rates = True
-
+        stratum_idx = kwargs['stratum']
         self._TP_st[stratum_idx,:] += ell_hat * ell * weight
         self._PP_st[stratum_idx,:] += ell_hat * weight
         self._P_st[stratum_idx,:] += ell * weight
 
-        if calc_rates:
-            self._P_rates = self._P_st/self.strata._n_sampled[:,np.newaxis]
-            self._TP_rates = self._TP_st/self.strata._n_sampled[:,np.newaxis]
-            self._PP_rates = self._PP_st/self.strata._n_sampled[:,np.newaxis]
+        P_rates = self._P_st / self.strata._n_sampled[:,np.newaxis]
+        TP_rates = self._TP_st / self.strata._n_sampled[:,np.newaxis]
+        PP_rates = self._PP_st / self.strata._n_sampled[:,np.newaxis]
 
         #: Update model estimate (with prior)
-        self._estimate[self.t_], self._F_num, self._F_den = \
-            self._calc_estimate(self._TP_rates, self._PP_rates, \
-                                self._P_rates, return_num_den=True)
-
-    def reset(self):
-        """Resets the sampler to its initial state
-
-        Note
-        ----
-        This will destroy the label cache and history of estimates
-        """
-        super(DruckSampler, self).reset()
-        self.strata.reset()
-        self._TP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._TP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_rates = np.zeros([self.strata.n_strata_, self._n_class])
-
-        for k in self.strata.indices_:
-            for i in range(2):
-                self._iterate(fixed_stratum = k, calc_rates = False)
+        self.stored_estimates[self.idx] = self._calc_estimate(TP_rates, PP_rates, P_rates)

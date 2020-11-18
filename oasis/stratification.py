@@ -132,6 +132,8 @@ def stratify_by_scores(scores, goal_n_strata='auto', method='cum_sqrt_F',
             if value >= csf_bins[j]:
                 new_bins.append(score_bins[idx])
                 j += 1
+
+        # Why
         new_bins[0] -= 0.01
         new_bins[-1] += 0.01
 
@@ -141,7 +143,6 @@ def stratify_by_scores(scores, goal_n_strata='auto', method='cum_sqrt_F',
         # remove empty strata
         nonempty_ids = np.unique(allocations)
         n_strata = len(nonempty_ids)
-        indices = np.arange(n_strata)
         allocations = np.digitize(allocations, nonempty_ids, right=True)
 
         if n_strata < goal_n_strata:

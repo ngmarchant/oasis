@@ -139,23 +139,18 @@ class Strata:
         int
             a randomly selected stratum index
         """
-        if pmf is None:
-            # Use weights
-            pmf = self.weights_
-
         if not replace:
             # Find strata which have been fully sampled (i.e. are now empty)
             empty = (self._n_sampled >= self.sizes_)
             if np.any(empty):
-                pmf = copy.copy(pmf)
-                pmf[empty] = 0
+                pmf = self.weights_[~empty]
                 if np.sum(pmf) == 0:
-                    raise RuntimeError
+                    raise RuntimeError("all datapoints have been sampled")
                 pmf /= np.sum(pmf)
 
-        return np.random.choice(self.indices_, p=pmf)
+        return np.random.choice(self.indices_[~empty], p=pmf)
 
-    def _sample_in_stratum(self, stratum_idx, replace = True):
+    def _sample_in_stratum(self, stratum_idx, replace=True):
         """Sample an item uniformly from a stratum
 
         Parameters
@@ -175,7 +170,7 @@ class Strata:
             stratum_loc = np.random.choice(self.sizes_[stratum_idx])
         else:
             # Extract only the unsampled items
-            stratum_locs = np.where(~self._sampled[stratum_idx])[0]
+            stratum_locs, = np.where(~self._sampled[stratum_idx])
             stratum_loc = np.random.choice(stratum_locs)
 
         # Record that item has been sampled
@@ -185,7 +180,7 @@ class Strata:
         loc = self.allocations_[stratum_idx][stratum_loc]
         return loc
 
-    def sample(self, pmf=None, replace=True):
+    def sample(self, replace=True):
         """Sample an item from the strata
 
         Parameters
@@ -205,7 +200,7 @@ class Strata:
         stratum_idx : int
             the stratum index that was sampled from
         """
-        stratum_idx = self._sample_stratum(pmf, replace=replace)
+        stratum_idx = self._sample_stratum(replace=replace)
         loc = self._sample_in_stratum(stratum_idx, replace=replace)
         return loc, stratum_idx
 

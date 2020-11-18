@@ -40,7 +40,7 @@ class PassiveSampler:
         # Array to record history of F-measure estimates
         self.stored_estimates = np.repeat(np.nan, self.max_iter)
 
-    def sample(self, n_to_sample: int, sample_with_replacement=True):
+    def sample(self, n_to_sample: int, sample_with_replacement=True, **kwargs):
         """Sample a sequence of items from the pool (with replacement)
 
         Parameters
@@ -49,7 +49,7 @@ class PassiveSampler:
             number of items to sample
         """
         for _ in range(n_to_sample):
-            loc, weight = self._sample_item(sample_with_replacement)
+            loc, weight = self._sample_item(sample_with_replacement, **kwargs)
             # Query label
             ell = self._query_label(loc)
             # Get predictions
@@ -66,7 +66,7 @@ class PassiveSampler:
     def sample_distinct(self, n_to_sample, **kwargs):
         self.sample(n_to_sample, sample_with_replacement=False)
    
-    def _sample_item(self, sample_with_replacement: bool)-> Tuple:
+    def _sample_item(self, sample_with_replacement: bool, **kwargs)-> Tuple:
         """Sample an item from the pool"""
         if sample_with_replacement:
             # Can sample from any of the items
