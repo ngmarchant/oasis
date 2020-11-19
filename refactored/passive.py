@@ -66,7 +66,7 @@ class PassiveSampler:
     def sample_distinct(self, n_to_sample, **kwargs):
         self.sample(n_to_sample, sample_with_replacement=False)
    
-    def _sample_item(self, sample_with_replacement: bool, **kwargs)-> Tuple:
+    def _sample_item(self, sample_with_replacement: bool, **kwargs) -> Tuple:
         """Sample an item from the pool"""
         if sample_with_replacement:
             # Can sample from any of the items
