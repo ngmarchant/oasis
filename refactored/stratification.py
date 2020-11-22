@@ -139,16 +139,20 @@ class Strata:
         int
             a randomly selected stratum index
         """
-        if not replace:
+        pmf = pmf or self.weights_
+        if replace:
             # Find strata which have been fully sampled (i.e. are now empty)
-            empty = (self._n_sampled >= self.sizes_)
-            if np.any(empty):
-                pmf = self.weights_[~empty]
-                if np.sum(pmf) == 0:
-                    raise RuntimeError("all datapoints have been sampled")
-                pmf /= np.sum(pmf)
+            return np.random.choice(self.indices_, p=pmf)
+
+        empty = (self._n_sampled >= self.sizes_)
+        if np.any(empty):
+            pmf = pmf[~empty]
+            if np.sum(pmf) == 0:
+                raise RuntimeError("all datapoints have been sampled")
+            pmf /= np.sum(pmf)
 
         return np.random.choice(self.indices_[~empty], p=pmf)
+
 
     def _sample_in_stratum(self, stratum_idx, replace=True):
         """Sample an item uniformly from a stratum
@@ -218,11 +222,7 @@ class Strata:
         numpy.ndarray, shape=(n_strata,n_class)
             array containing the mean value of the quantity within each stratum
         """
-        # TODO Check that quantity is valid
-        if values.ndim > 1:
-            return np.array([np.mean(values[x,:], axis=0) for x in self.allocations_])
-        else:
-            return np.array([np.mean(values[x]) for x in self.allocations_])
+        return np.array([np.mean(values[x]) for x in self.allocations_])
 
     def reset(self):
         """Reset the instance to begin sampling from scratch"""
