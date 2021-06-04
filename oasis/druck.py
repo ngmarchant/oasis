@@ -137,7 +137,9 @@ class DruckSampler(PassiveSampler):
                 self.strata = \
                     auto_stratify(self.scores[:,self.opt_class].ravel(), \
                                   **kwargs)
-
+        else:
+            self.strata.reset()
+        
         #: Number of TP, PP, P sampled per stratum
         self._TP_st = np.zeros([self.strata.n_strata_, self._n_class])
         self._PP_st = np.zeros([self.strata.n_strata_, self._n_class])
@@ -217,12 +219,12 @@ class DruckSampler(PassiveSampler):
         """
         super(DruckSampler, self).reset()
         self.strata.reset()
-        self._TP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_st = np.zeros([self.strata.n_strata_, self._n_class])
-        self._TP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._PP_rates = np.zeros([self.strata.n_strata_, self._n_class])
-        self._P_rates = np.zeros([self.strata.n_strata_, self._n_class])
+        self._TP_st[:,:] = 0
+        self._PP_st[:,:] = 0
+        self._P_st[:,:] = 0
+        self._TP_rates[:,:] = 0
+        self._PP_rates[:,:] = 0
+        self._P_rates[:,:] = 0
 
         for k in self.strata.indices_:
             for i in range(2):

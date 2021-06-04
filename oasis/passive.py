@@ -145,14 +145,14 @@ class PassiveSampler:
         ----
         This will destroy the label cache and history of estimates.
         """
-        self._TP = np.zeros(self._n_class)
-        self._FP = np.zeros(self._n_class)
-        self._FN = np.zeros(self._n_class)
-        self._TN = np.zeros(self._n_class)
+        self._TP[:] = 0
+        self._FP[:] = 0
+        self._FN[:] = 0
+        self._TN[:] = 0
         self.t_ = 0
-        self._queried_oracle = np.repeat(False, self._max_iter)
-        self.cached_labels_ = np.repeat(np.nan, self._n_items)
-        self._estimate = np.tile(np.nan, [self._max_iter, self._n_class])
+        self._queried_oracle[:] = False
+        self.cached_labels_[:] = np.nan
+        self._estimate[:,:] = np.nan
 
     def _iterate(self, **kwargs):
         """Procedure for a single iteration (sampling and updating)"""

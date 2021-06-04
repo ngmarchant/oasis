@@ -132,13 +132,13 @@ class BetaBernoulliModel:
 
     def reset(self):
         """Reset the instance to its initial state"""
-        self.alpha_ = np.zeros(self._size, dtype=int)
-        self.beta_ = np.zeros(self._size, dtype=int)
-        self.theta_ = np.empty(self._size, dtype=float)
+        self.alpha_[:] = 0
+        self.beta_[:] = 0
+        self.theta_[:] = 0
         if self.store_variance:
-            self.var_theta_ = np.empty(self._size, dtype=float)
+            self.var_theta_[:] = 0
         if self.store_wp:
-            self.theta_wp_ = np.empty(self._size, dtype=float)
+            self.theta_wp_[:] = 0
 
         self._calc_theta()
         if self.store_variance:
@@ -305,7 +305,9 @@ class OASISSampler(PassiveSampler):
                 self.strata = \
                     auto_stratify(self.scores[:,self.opt_class].ravel(), \
                                   **kwargs)
-
+        else:
+            self.strata.reset()
+        
         # Calculate mean prediction per stratum
         self._preds_avg_in_strata = self.strata.intra_mean(self.predictions)
 
@@ -461,7 +463,6 @@ class OASISSampler(PassiveSampler):
 
         # Array to record history of instrumental distributions
         if self.record_inst_hist:
-            self._inst_pmf = np.zeros([self.strata.n_strata_, self._max_iter],
-                                      dtype=float)
+            self._inst_pmf[:, :] = 0
         else:
-            self._inst_pmf = np.zeros(self.strata.n_strata_, dtype=float)
+            self._inst_pmf[:] = 0
