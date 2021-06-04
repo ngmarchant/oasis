@@ -188,7 +188,8 @@ class DruckSampler(PassiveSampler):
     def _update_estimate_and_sampler(self, ell, ell_hat, weight, extra_info,
                                      **kwargs):
         """Update the estimate after querying the label for an item"""
-
+        # Overwriting the base class method, since estimator is stratified
+        
         stratum_idx = extra_info['stratum']
 
         if 'calc_rates' in kwargs:
