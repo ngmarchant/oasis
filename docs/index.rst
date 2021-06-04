@@ -49,10 +49,10 @@ following paper:
 
 .. _marchant-17:
 
-    N. G. Marchant and B. I. P. Rubinstein, In Search of an Entity Resolution
-    OASIS: Optimal Asymptotic Sequential Importance Sampling,
-    arXiv:1703.00617 [cs.LG], Mar 2017.
-    `link <https://arxiv.org/pdf/1703.00617.pdf>`_
+    N. G. Marchant and B. I. P. Rubinstein, “In Search of an Entity Resolution
+    OASIS: Optimal Asymptotic Sequential Importance Sampling,” in 
+    *Proceedings of the VLDB Endowment*, vol. 10, no. 11, pp. 1322-1333, 2017.
+    `link <http://www.vldb.org/pvldb/vol10/p1322-rubinstein.pdf>`_
 
 License and disclaimer
 ======================

@@ -44,11 +44,11 @@ For further information, see the :class:`oasis.DruckSampler` class.
 References
 ----------
 .. [Druck11]  G. Druck and A. McCallum, “Toward Interactive Training and
-   Evaluation,” in Proceedings of the 20th ACM International Conference on
-   Information and Knowledge Management, 2011, pp. 947–956.
+   Evaluation,” in *Proceedings of the 20th ACM International Conference on
+   Information and Knowledge Management*, pp. 947–956, 2011.
 .. [Sawade09] C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of
-   F-Measures,” in Advances in Neural Information Processing Systems 23, 2010,
-   pp. 2083–2091
-.. [Marchant17] N. G. Marchant and B. I. P. Rubinstein, In Search of an Entity
-   Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,
-   arXiv:1703.00617 [cs.LG], Mar 2017.
+   F-Measures,” in *Advances in Neural Information Processing Systems*, pp.
+   2083–2091, 2010.
+.. [Marchant17] N. G. Marchant and B. I. P. Rubinstein, “In Search of an Entity
+    Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,” in
+    *Proceedings of the VLDB Endowment*, vol. 10, no. 11, pp. 1322-1333, 2017.
