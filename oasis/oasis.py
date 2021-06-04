@@ -315,7 +315,7 @@ class OASISSampler(PassiveSampler):
         if prior_strength is None:
             self.prior_strength = 2*self.strata.n_strata_
         else:
-            self.prior_strength = verify_positive(float(self.prior_strength))
+            self.prior_strength = verify_positive(float(prior_strength))
 
         # Instantiate Beta-Bernoulli model using probabilities averaged over
         # opt_class
