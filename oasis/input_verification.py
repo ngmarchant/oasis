@@ -1,5 +1,6 @@
 import numpy as np
 from .stratification import Strata
+from scipy.special import expit
 
 def verify_positive(value):
     """Throws exception if value is not positive"""
@@ -118,7 +119,7 @@ def scores_to_probs(scores, proba, eps=0.01):
     """Transforms scores to probabilities by applying the logistic function"""
     if np.any(~proba):
         # Need to convert some of the scores into probabilities
-        probs = copy.deepcopy(scores)
+        probs = np.array(scores, copy=True)
         n_class = len(proba)
         for m in range(n_class):
             if not proba[m]:
@@ -127,7 +128,7 @@ def scores_to_probs(scores, proba, eps=0.01):
                 max_extreme_score = max(np.abs(np.min(scores[:,m])),\
                                     np.abs(np.max(scores[:,m])))
                 k = np.log((1-eps)/eps)/max_extreme_score # scale factor
-                self._probs[:,m] = expit(k * self.scores[:,m])
+                probs[:,m] = expit(k * scores[:,m])
         return probs
     else:
         return scores
