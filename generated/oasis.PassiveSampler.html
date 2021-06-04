@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>oasis.PassiveSampler &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'v0.1.2-2-g7d1c5a1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>oasis.PassiveSampler &#8212; OASIS v0.1.2-14-g25b9d06 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="oasis.stratification.Strata" href="oasis.stratification.Strata.html" />
@@ -35,128 +24,110 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="oasis-passivesampler">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">oasis</span></code>.PassiveSampler<a class="headerlink" href="#oasis-passivesampler" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="oasis.PassiveSampler">
-<em class="property">class </em><code class="descclassname">oasis.</code><code class="descname">PassiveSampler</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler" title="Permalink to this definition">¶</a></dt>
+  <section id="oasis-passivesampler">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis</span></code>.PassiveSampler<a class="headerlink" href="#oasis-passivesampler" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="oasis.PassiveSampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">oasis.</span></span><span class="sig-name descname"><span class="pre">PassiveSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oracle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Passive sampling for estimation of the weighted F-measure</p>
 <p>Estimates the quantity:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>TP / (alpha * (TP + FP) + (1 - alpha) * (TP + FN))
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>TP / (alpha * (TP + FP) + (1 - alpha) * (TP + FN))
 </pre></div>
 </div>
 <p>on a finite pool by sampling items uniformly and querying their labels from
 an oracle (which must be provided).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float</p>
-<blockquote>
-<div><p>Weight for the F-measure. Valid weights are on the interval [0, 1].
-<code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">1</span></code> corresponds to precision, <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0</span></code> corresponds to
-recall, and <code class="docutils literal"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0.5</span></code> corresponds to the balanced F-measure.</p>
-</div></blockquote>
-<p><strong>predictions</strong> : array-like, shape=(n_items,n_class)</p>
-<blockquote>
-<div><p>Predicted labels for the items in the pool. Rows represent items and
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>Weight for the F-measure. Valid weights are on the interval [0, 1].
+<code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">1</span></code> corresponds to precision, <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0</span></code> corresponds to
+recall, and <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">==</span> <span class="pre">0.5</span></code> corresponds to the balanced F-measure.</p>
+</dd>
+<dt><strong>predictions</strong><span class="classifier">array-like, shape=(n_items,n_class)</span></dt><dd><p>Predicted labels for the items in the pool. Rows represent items and
 columns represent different classifiers under evaluation (i.e. more
 than one classifier may be evaluated in parallel). Valid labels are 0
 or 1.</p>
-</div></blockquote>
-<p><strong>oracle</strong> : function</p>
-<blockquote>
-<div><p>Function that returns ground truth labels for items in the pool. The
+</dd>
+<dt><strong>oracle</strong><span class="classifier">function</span></dt><dd><p>Function that returns ground truth labels for items in the pool. The
 function should take an item identifier as input (i.e. its
 corresponding row index) and return the ground truth label. Valid
 labels are 0 or 1.</p>
-</div></blockquote>
-<p><strong>max_iter</strong> : int, optional, default None</p>
-<blockquote>
-<div><p>Maximum number of iterations to expect for pre-allocating arrays.
+</dd>
+<dt><strong>max_iter</strong><span class="classifier">int, optional, default None</span></dt><dd><p>Maximum number of iterations to expect for pre-allocating arrays.
 Once this limit is reached, sampling can no longer continue. If no
 value is given, defaults to n_items.</p>
-</div></blockquote>
-<p><strong>replace</strong> : bool, optional, default True</p>
-<blockquote>
-<div><p>Whether to sample with or without replacement.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>identifiers</strong> : array-like, optional, default None</p>
-<blockquote>
-<div><p>Unique identifiers for the items in the pool. Must match the row order
-of the &#8220;predictions&#8221; parameter. If no value is given, defaults to
-[0, 1, ..., n_items].</p>
-</div></blockquote>
-<p><strong>debug</strong> : bool, optional, default True</p>
-<blockquote class="last">
-<div><p>Whether to print out verbose debugging information.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="94%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a href="#id1"><span class="problematic" id="id2">estimate_</span></a></td>
-<td>(numpy.ndarray) F-measure estimates for each iteration.</td>
-</tr>
-<tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">queried_oracle_</span></a></td>
-<td>(numpy.ndarray) Records whether the oracle was queried at each iteration (True) or whether a cached label was used (False).</td>
-</tr>
-<tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">cached_labels_</span></a></td>
-<td>(numpy.ndarray, shape=(n_items,)) Previously sampled ground truth labels for the items in the pool. Items which have not had their labels queried are recorded as NaNs. The order of the items matches the row order for the &#8220;predictions&#8221; parameter.</td>
-</tr>
-<tr class="row-even"><td><a href="#id7"><span class="problematic" id="id8">t_</span></a></td>
-<td>(int) Iteration index.</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt><strong>replace</strong><span class="classifier">bool, optional, default True</span></dt><dd><p>Whether to sample with or without replacement.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>identifiers</strong><span class="classifier">array-like, optional, default None</span></dt><dd><p>Unique identifiers for the items in the pool. Must match the row order
+of the “predictions” parameter. If no value is given, defaults to
+[0, 1, …, n_items].</p>
+</dd>
+<dt><strong>debug</strong><span class="classifier">bool, optional, default True</span></dt><dd><p>Whether to print out verbose debugging information.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>estimate_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>F-measure estimates for each iteration.</p>
+</dd>
+<dt><strong>queried_oracle_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Records whether the oracle was queried at each iteration (True) or
+whether a cached label was used (False).</p>
+</dd>
+<dt><strong>cached_labels_</strong><span class="classifier">numpy.ndarray, shape=(n_items,)</span></dt><dd><p>Previously sampled ground truth labels for the items in the pool. Items
+which have not had their labels queried are recorded as NaNs. The order
+of the items matches the row order for the “predictions” parameter.</p>
+</dd>
+<dt><strong>t_</strong><span class="classifier">int</span></dt><dd><p>Iteration index.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
-<td>Resets the sampler to its initial state</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</p></td>
+<td><p>Resets the sampler to its initial state</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>(n_to_sample,&nbsp;**kwargs)</td>
-<td>Sample a sequence of items from the pool</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code>(n_to_sample, **kwargs)</p></td>
+<td><p>Sample a sequence of items from the pool</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample_distinct</span></code>(n_to_sample,&nbsp;**kwargs)</td>
-<td>Sample a sequence of items from the pool until a minimum number of</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_distinct</span></code>(n_to_sample, **kwargs)</p></td>
+<td><p>Sample a sequence of items from the pool until a minimum number of distinct items are queried</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="oasis.PassiveSampler.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>alpha</em>, <em>predictions</em>, <em>oracle</em>, <em>max_iter=None</em>, <em>identifiers=None</em>, <em>replace=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="oasis.PassiveSampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oracle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.PassiveSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
 
 </dd></dl>
 
-<div class="clearer"></div></div>
+<div class="clearer"></div></section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -195,22 +166,30 @@ of the &#8220;predictions&#8221; parameter. If no value is given, defaults to
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../sections/api-ref.html">API Reference</a><ul>
-      <li>Previous: <a href="oasis.DruckSampler.html" title="previous chapter"><code class="docutils literal"><span class="pre">oasis</span></code>.DruckSampler</a></li>
-      <li>Next: <a href="oasis.stratification.Strata.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis.stratification</span></code>.Strata</a></li>
+      <li>Previous: <a href="oasis.DruckSampler.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis</span></code>.DruckSampler</a></li>
+      <li>Next: <a href="oasis.stratification.Strata.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis.stratification</span></code>.Strata</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -219,8 +198,8 @@ of the &#8220;predictions&#8221; parameter. If no value is given, defaults to
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/generated/oasis.PassiveSampler.rst.txt"

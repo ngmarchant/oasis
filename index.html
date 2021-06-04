@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>OASIS: a tool for efficient evaluation of classifiers &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     'v0.1.2-2-g7d1c5a1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>OASIS: a tool for efficient evaluation of classifiers &#8212; OASIS v0.1.2-14-g25b9d06 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="sections/installation.html" />
@@ -34,68 +23,70 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="oasis-a-tool-for-efficient-evaluation-of-classifiers">
+  <section id="oasis-a-tool-for-efficient-evaluation-of-classifiers">
 <h1>OASIS: a tool for efficient evaluation of classifiers<a class="headerlink" href="#oasis-a-tool-for-efficient-evaluation-of-classifiers" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://travis-ci.org/ngmarchant/oasis"><img alt="https://travis-ci.org/ngmarchant/oasis.svg?branch=master" src="https://travis-ci.org/ngmarchant/oasis.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://opensource.org/licenses/MIT"><img alt="https://img.shields.io/badge/License-MIT-yellow.svg" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/oasis"><img alt="https://badge.fury.io/py/oasis.svg" src="https://badge.fury.io/py/oasis.svg" /></a>
-<div class="section" id="overview">
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>OASIS is a tool for evaluating binary classifiers when ground truth class
 labels are not immediately available, but can be obtained at some cost (e.g.
 by asking human annotators). The tool takes an unlabelled test set as input and
 intelligently selects items to label so as to provide a <em>precise</em> estimate of
-the classifier&#8217;s performance, whilst <em>minimising</em> the amount of labelling
+the classifier’s performance, whilst <em>minimising</em> the amount of labelling
 required. The underlying strategy for selecting the items to label is based on
 a technique called <em>adaptive importance sampling</em>, which is optimised for the
 classifier performance measure of interest. Currently, OASIS supports
 estimation of the weighted F-measure, which includes the F1-score, precision
 and recall.</p>
-</div>
-<div class="section" id="when-should-i-use-oasis">
+</section>
+<section id="when-should-i-use-oasis">
 <h2>When should I use OASIS?<a class="headerlink" href="#when-should-i-use-oasis" title="Permalink to this headline">¶</a></h2>
 <p>OASIS is particularly useful when:</p>
 <ul class="simple">
-<li>you have a test set, but you don&#8217;t yet have ground truth labels</li>
-<li>ground truth labels can be obtained sequentially (this constraint may be
-relaxed in a future update)</li>
-<li>F1-score, precision, or recall is a sufficient measure for the classifier&#8217;s
-performance</li>
-<li>the classification problem demonstrates a high degree of class imbalance
+<li><p>you have a test set, but you don’t yet have ground truth labels</p></li>
+<li><p>ground truth labels can be obtained sequentially (this constraint may be
+relaxed in a future update)</p></li>
+<li><p>F1-score, precision, or recall is a sufficient measure for the classifier’s
+performance</p></li>
+<li><p>the classification problem demonstrates a high degree of class imbalance
 (examples include entity resolution, information retrieval, text
-classification and many problems in the medical domain)</li>
+classification and many problems in the medical domain)</p></li>
 </ul>
 <p>Note that the final point to do with class imbalance does not need to be
 satisifed in order for OASIS to provide accurate estimates of classifier
 performance. It merely describes when OASIS is expected to excel over simpler
 methods, such as uniform sampling (see <a class="reference internal" href="sections/other-samplers.html#passive-sampler"><span class="std std-ref">Passive sampler</span></a>).</p>
-</div>
-<div class="section" id="where-can-i-find-out-more">
+</section>
+<section id="where-can-i-find-out-more">
 <h2>Where can I find out more?<a class="headerlink" href="#where-can-i-find-out-more" title="Permalink to this headline">¶</a></h2>
 <p>Details about the interface for OASIS, including the required inputs are given
 in the <a class="reference internal" href="sections/oasis.html#oasis"><span class="std std-ref">OASIS</span></a> section of this documentation. For more information about
 the algorithm itself and a proof of its consistency, please refer to the
 following paper:</p>
 <blockquote id="marchant-17">
-<div>N. G. Marchant and B. I. P. Rubinstein, In Search of an Entity Resolution
-OASIS: Optimal Asymptotic Sequential Importance Sampling,
-arXiv:1703.00617 [cs.LG], Mar 2017.
-<a class="reference external" href="https://arxiv.org/pdf/1703.00617.pdf">link</a></div></blockquote>
-</div>
-<div class="section" id="license-and-disclaimer">
+<div><p>N. G. Marchant and B. I. P. Rubinstein, “In Search of an Entity Resolution
+OASIS: Optimal Asymptotic Sequential Importance Sampling,” in
+<em>Proceedings of the VLDB Endowment</em>, vol. 10, no. 11, pp. 1322-1333, 2017.
+<a class="reference external" href="http://www.vldb.org/pvldb/vol10/p1322-rubinstein.pdf">link</a></p>
+</div></blockquote>
+</section>
+<section id="license-and-disclaimer">
 <h2>License and disclaimer<a class="headerlink" href="#license-and-disclaimer" title="Permalink to this headline">¶</a></h2>
 <p>OASIS is released under the MIT license. Please see the LICENSE file included
 with the source.</p>
-<p>The software is provided &#8220;as is&#8221;, without warranty of any kind, express or
+<p>The software is provided “as is”, without warranty of any kind, express or
 implied, including but not limited to the warranties of merchantability,
 fitness for a particular purpose and noninfringement. In no event shall the
 authors or copyright holders be liable for any claim, damages or other
@@ -104,11 +95,12 @@ out of or in connection with the software or the use or other dealings in the
 software.</p>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -147,15 +139,23 @@ software.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -164,8 +164,8 @@ software.</p>
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

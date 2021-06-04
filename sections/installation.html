@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Installation &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'v0.1.2-2-g7d1c5a1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation &#8212; OASIS v0.1.2-14-g25b9d06 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="OASIS" href="oasis.html" />
@@ -35,50 +24,52 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="installation">
+  <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>The OASIS package currently supports Python 3. Legacy Python (2.x) is not
 supported.</p>
-<div class="section" id="installation-from-source">
+<section id="installation-from-source">
 <h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
 <p>You can get the latest stable release from <a class="reference external" href="https://pypi.python.org/pypi">PyPI</a> by running:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>$ pip3 install oasis
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ pip3 install oasis
 </pre></div>
 </div>
 <p>Alternatively, you can experiment with the latest development code by cloning the source from <a class="reference external" href="https://www.github.com/ngmarchant/oasis">GitHub</a>:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>$ git clone https://github.com/ngmarchant/oasis.git
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/ngmarchant/oasis.git
 </pre></div>
 </div>
 <p>You can then install the package to your user site directory as follows:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>$ cd oasis
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ cd oasis
 $ python3 setup.py install --user
 </pre></div>
 </div>
-</div>
-<div class="section" id="dependencies">
+</section>
+<section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>OASIS depends on the following Python packages:</p>
 <ul class="simple">
-<li>numpy</li>
-<li>scipy</li>
-<li>sklearn (to use the experimental stratification method based on K-means clustering)</li>
-<li>tables (to use <code class="xref py py-class docutils literal"><span class="pre">Data</span></code> container)</li>
+<li><p>numpy</p></li>
+<li><p>scipy</p></li>
+<li><p>sklearn (to use the experimental stratification method based on K-means clustering)</p></li>
+<li><p>tables (to use <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> container)</p></li>
 </ul>
 <p>These dependencies should be automatically resolved during installation.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -122,15 +113,23 @@ $ python3 setup.py install --user
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -139,8 +138,8 @@ $ python3 setup.py install --user
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/sections/installation.rst.txt"

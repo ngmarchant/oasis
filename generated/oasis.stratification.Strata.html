@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>oasis.stratification.Strata &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'v0.1.2-2-g7d1c5a1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>oasis.stratification.Strata &#8212; OASIS v0.1.2-14-g25b9d06 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="oasis.stratification.stratify_by_scores" href="oasis.stratification.stratify_by_scores.html" />
@@ -35,98 +24,88 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="oasis-stratification-strata">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">oasis.stratification</span></code>.Strata<a class="headerlink" href="#oasis-stratification-strata" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="oasis.stratification.Strata">
-<em class="property">class </em><code class="descclassname">oasis.stratification.</code><code class="descname">Strata</code><span class="sig-paren">(</span><em>allocations</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata" title="Permalink to this definition">¶</a></dt>
+  <section id="oasis-stratification-strata">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis.stratification</span></code>.Strata<a class="headerlink" href="#oasis-stratification-strata" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="oasis.stratification.Strata">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">oasis.stratification.</span></span><span class="sig-name descname"><span class="pre">Strata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allocations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a collection of strata and facilitates sampling from them</p>
 <p>This class takes an array of prescribed stratum allocations for a finite
 pool and stores the information in a form that is convenient for
 sampling. The items in the pool are referred to uniquely by their location
 in the input array. An item may be sampled from the strata (according to an
 arbitrary distribution over the strata) using the <cite>sample</cite> method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>allocations</strong> : array-like, shape=(n_items,)</p>
-<blockquote class="last">
-<div><p>ordered array of ints or strs which specifies the name/identifier of
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>allocations</strong><span class="classifier">array-like, shape=(n_items,)</span></dt><dd><p>ordered array of ints or strs which specifies the name/identifier of
 the allocated stratum for each item in the pool.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="4%" />
-<col width="96%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a href="#id1"><span class="problematic" id="id2">allocations_</span></a></td>
-<td>(list of numpy.ndarrays, length n_strata) represents the items contained within each stratum using a list of arrays. Each array in the list refers to a particular stratum, and stores the items contained within that stratum. Items are referred to by their location in the input array.</td>
-</tr>
-<tr class="row-even"><td><a href="#id3"><span class="problematic" id="id4">n_strata_</span></a></td>
-<td>(int) number of strata</td>
-</tr>
-<tr class="row-odd"><td><a href="#id5"><span class="problematic" id="id6">n_items_</span></a></td>
-<td>(int) number of items in the pool (i.e. in all of the strata)</td>
-</tr>
-<tr class="row-even"><td><a href="#id7"><span class="problematic" id="id8">names_</span></a></td>
-<td>(numpy.ndarray, shape=(n_strata,)) array containing names/identifiers for each stratum</td>
-</tr>
-<tr class="row-odd"><td><a href="#id9"><span class="problematic" id="id10">indices_</span></a></td>
-<td>(numpy.ndarray, shape=(n_strata,)) array containing unique indices for each stratum</td>
-</tr>
-<tr class="row-even"><td><a href="#id11"><span class="problematic" id="id12">sizes_</span></a></td>
-<td>(numpy.ndarray, shape=(n_strata,)) array specifying how many items are contained with each stratum</td>
-</tr>
-<tr class="row-odd"><td><a href="#id13"><span class="problematic" id="id14">weights_</span></a></td>
-<td>(numpy.ndarray, shape=(n_strata,)) array specifying the stratum weights (sizes/n_items)</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>allocations_</strong><span class="classifier">list of numpy.ndarrays, length n_strata</span></dt><dd><p>represents the items contained within each stratum using a list of
+arrays. Each array in the list refers to a particular stratum, and
+stores the items contained within that stratum. Items are referred to
+by their location in the input array.</p>
+</dd>
+<dt><strong>n_strata_</strong><span class="classifier">int</span></dt><dd><p>number of strata</p>
+</dd>
+<dt><strong>n_items_</strong><span class="classifier">int</span></dt><dd><p>number of items in the pool (i.e. in all of the strata)</p>
+</dd>
+<dt><strong>names_</strong><span class="classifier">numpy.ndarray, shape=(n_strata,)</span></dt><dd><p>array containing names/identifiers for each stratum</p>
+</dd>
+<dt><strong>indices_</strong><span class="classifier">numpy.ndarray, shape=(n_strata,)</span></dt><dd><p>array containing unique indices for each stratum</p>
+</dd>
+<dt><strong>sizes_</strong><span class="classifier">numpy.ndarray, shape=(n_strata,)</span></dt><dd><p>array specifying how many items are contained with each stratum</p>
+</dd>
+<dt><strong>weights_</strong><span class="classifier">numpy.ndarray, shape=(n_strata,)</span></dt><dd><p>array specifying the stratum weights (sizes/n_items)</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">intra_mean</span></code>(values)</td>
-<td>Calculate the mean of a quantity within strata</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">intra_mean</span></code>(values)</p></td>
+<td><p>Calculate the mean of a quantity within strata</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">reset</span></code>()</td>
-<td>Reset the instance to begin sampling from scratch</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</p></td>
+<td><p>Reset the instance to begin sampling from scratch</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">sample</span></code>([pmf,&nbsp;replace])</td>
-<td>Sample an item from the strata</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code>([pmf, replace])</p></td>
+<td><p>Sample an item from the strata</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="oasis.stratification.Strata.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>allocations</em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="oasis.stratification.Strata.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allocations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#oasis.stratification.Strata.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
 
 </dd></dl>
 
-<div class="clearer"></div></div>
+<div class="clearer"></div></section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -165,22 +144,30 @@ the allocated stratum for each item in the pool.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../sections/api-ref.html">API Reference</a><ul>
-      <li>Previous: <a href="oasis.PassiveSampler.html" title="previous chapter"><code class="docutils literal"><span class="pre">oasis</span></code>.PassiveSampler</a></li>
-      <li>Next: <a href="oasis.stratification.stratify_by_scores.html" title="next chapter"><code class="docutils literal"><span class="pre">oasis.stratification</span></code>.stratify_by_scores</a></li>
+      <li>Previous: <a href="oasis.PassiveSampler.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis</span></code>.PassiveSampler</a></li>
+      <li>Next: <a href="oasis.stratification.stratify_by_scores.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oasis.stratification</span></code>.stratify_by_scores</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -189,8 +176,8 @@ the allocated stratum for each item in the pool.</p>
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/generated/oasis.stratification.Strata.rst.txt"

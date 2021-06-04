@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Other samplers &#8212; OASIS v0.1.2-2-g7d1c5a1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'v0.1.2-2-g7d1c5a1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Other samplers &#8212; OASIS v0.1.2-14-g25b9d06 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API Reference" href="api-ref.html" />
@@ -35,76 +24,71 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="other-samplers">
+  <section id="other-samplers">
 <span id="id1"></span><h1>Other samplers<a class="headerlink" href="#other-samplers" title="Permalink to this headline">¶</a></h1>
 <p>The OASIS package also implements three alternative sampling-based estimation
-methods. These alternative methods are all non-adaptive&#8212;i.e. they don&#8217;t learn
+methods. These alternative methods are all non-adaptive—i.e. they don’t learn
 from the labels as they are received from the oracle. Experiments comparing
 these alternative methods with OASIS in the entity resolution domain are
-presented in <a class="reference internal" href="#marchant17" id="id2">[Marchant17]</a>.</p>
-<div class="section" id="passive-sampler">
+presented in <a class="reference internal" href="#marchant17" id="id2"><span>[Marchant17]</span></a>.</p>
+<section id="passive-sampler">
 <span id="id3"></span><h2>Passive sampler<a class="headerlink" href="#passive-sampler" title="Permalink to this headline">¶</a></h2>
 <p>This method is the simplest approach and involves choosing items to label by
 sampling uniformly from the pool. It supports sampling with or without
-replacement through the <code class="docutils literal"><span class="pre">replace</span></code> parameter.</p>
-<p>For further information, see the <a class="reference internal" href="../generated/oasis.PassiveSampler.html#oasis.PassiveSampler" title="oasis.PassiveSampler"><code class="xref py py-class docutils literal"><span class="pre">oasis.PassiveSampler</span></code></a> class.</p>
-</div>
-<div class="section" id="non-adaptive-importance-sampler">
+replacement through the <code class="docutils literal notranslate"><span class="pre">replace</span></code> parameter.</p>
+<p>For further information, see the <a class="reference internal" href="../generated/oasis.PassiveSampler.html#oasis.PassiveSampler" title="oasis.PassiveSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">oasis.PassiveSampler</span></code></a> class.</p>
+</section>
+<section id="non-adaptive-importance-sampler">
 <span id="importance-sampler"></span><h2>Non-adaptive importance sampler<a class="headerlink" href="#non-adaptive-importance-sampler" title="Permalink to this headline">¶</a></h2>
-<p>This method is based on importance sampling using a similar &#8220;optimal&#8221;
-instrumental distribution to the one used in OASIS (see <a class="reference internal" href="#sawade09" id="id4">[Sawade09]</a>). The
-key difference is that this method approximates the &#8220;optimal&#8221; instrumental
+<p>This method is based on importance sampling using a similar “optimal”
+instrumental distribution to the one used in OASIS (see <a class="reference internal" href="#sawade09" id="id4"><span>[Sawade09]</span></a>). The
+key difference is that this method approximates the “optimal” instrumental
 distribution based solely on the classifier scores, which may be inaccurate.
 It cannot adapt based on the incoming ground truth labels.</p>
-<p>For further information, see the <a class="reference internal" href="../generated/oasis.ImportanceSampler.html#oasis.ImportanceSampler" title="oasis.ImportanceSampler"><code class="xref py py-class docutils literal"><span class="pre">oasis.ImportanceSampler</span></code></a> class.</p>
-</div>
-<div class="section" id="stratified-sampler">
+<p>For further information, see the <a class="reference internal" href="../generated/oasis.ImportanceSampler.html#oasis.ImportanceSampler" title="oasis.ImportanceSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">oasis.ImportanceSampler</span></code></a> class.</p>
+</section>
+<section id="stratified-sampler">
 <span id="id5"></span><h2>Stratified sampler<a class="headerlink" href="#stratified-sampler" title="Permalink to this headline">¶</a></h2>
-<p>This method is based on unbiased stratified sampling (see <a class="reference internal" href="#druck11" id="id6">[Druck11]</a>). Like
+<p>This method is based on unbiased stratified sampling (see <a class="reference internal" href="#druck11" id="id6"><span>[Druck11]</span></a>). Like
 OASIS, it depends on a partitioning of the pool into a collection of strata. In
 practice, it tends to perform similarly to passive sampling.</p>
-<p>For further information, see the <a class="reference internal" href="../generated/oasis.DruckSampler.html#oasis.DruckSampler" title="oasis.DruckSampler"><code class="xref py py-class docutils literal"><span class="pre">oasis.DruckSampler</span></code></a> class.</p>
-<div class="section" id="references">
+<p>For further information, see the <a class="reference internal" href="../generated/oasis.DruckSampler.html#oasis.DruckSampler" title="oasis.DruckSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">oasis.DruckSampler</span></code></a> class.</p>
+<section id="references">
 <h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
-<table class="docutils citation" frame="void" id="druck11" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[Druck11]</a></td><td>G. Druck and A. McCallum, “Toward Interactive Training and
-Evaluation,” in Proceedings of the 20th ACM International Conference on
-Information and Knowledge Management, 2011, pp. 947–956.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="sawade09" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[Sawade09]</a></td><td>C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of
-F-Measures,” in Advances in Neural Information Processing Systems 23, 2010,
-pp. 2083–2091</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="marchant17" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[Marchant17]</a></td><td>N. G. Marchant and B. I. P. Rubinstein, In Search of an Entity
-Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,
-arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<dl class="citation">
+<dt class="label" id="druck11"><span class="brackets"><a class="fn-backref" href="#id6">Druck11</a></span></dt>
+<dd><p>G. Druck and A. McCallum, “Toward Interactive Training and
+Evaluation,” in <em>Proceedings of the 20th ACM International Conference on
+Information and Knowledge Management</em>, pp. 947–956, 2011.</p>
+</dd>
+<dt class="label" id="sawade09"><span class="brackets"><a class="fn-backref" href="#id4">Sawade09</a></span></dt>
+<dd><p>C. Sawade, N. Landwehr, and T. Scheffer, “Active Estimation of
+F-Measures,” in <em>Advances in Neural Information Processing Systems</em>, pp.
+2083–2091, 2010.</p>
+</dd>
+<dt class="label" id="marchant17"><span class="brackets"><a class="fn-backref" href="#id2">Marchant17</a></span></dt>
+<dd><p>N. G. Marchant and B. I. P. Rubinstein, “In Search of an Entity
+Resolution OASIS: Optimal Asymptotic Sequential Importance Sampling,” in
+<em>Proceedings of the VLDB Endowment</em>, vol. 10, no. 11, pp. 1322-1333, 2017.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -149,15 +133,23 @@ arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -166,8 +158,8 @@ arXiv:1703.00617 [cs.LG], Mar 2017.</td></tr>
       &copy;2017, Neil G. Marchant.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/sections/other-samplers.rst.txt"
